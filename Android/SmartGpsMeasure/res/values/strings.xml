@@ -1,0 +1,28 @@
+<resources>
+
+    <string name="app_name">Smart Gps Measurer</string>
+    <string name="hint_gps_data">gps data</string>
+    <string name="hint_sat_data">satellite data</string>
+    <string name="hint_tst_log">test log</string>
+    <string name="menu_settings">Settings</string>
+    <string name="title_activity_main">Smart Gps Measurer</string>
+    
+    <string name="toast_gps_disable">GPS is disable.</string>
+    
+    <string name="txt_latitude">Latitude: </string>
+    <string name="txt_longitude">Longitude: </string>
+    <string name="txt_altitude">Altitude: </string>
+    <string name="txt_timestamp">Time: </string>
+    <string name="txt_speed">Speed: </string>
+    <string name="txt_accuracy">Accuracy: </string>
+    <string name="txt_provider">Provider: </string>
+    <string name="txt_delta_distance">Delta distance: </string>
+    
+    <string name="txt_sat_max">Max Sat: </string>
+    <string name="txt_use_max">Used Sat: </string>
+    
+    <string name="txt_gps_disable">DISABLE</string>
+    <string name="txt_gps_fixing">FIXING</string>
+    <string name="txt_gps_fixed">FIXED</string>
+
+</resources>
