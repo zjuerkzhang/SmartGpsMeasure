@@ -187,6 +187,14 @@ public class MainActivity extends Activity implements LocationListener {
 			sb.append(p_location.distanceTo(m_location));
 		sb.append("\n");
 		
+		sb.append(this.getString(R.string.txt_delta_distance));
+		if(m_location==null)
+			sb.append(0);
+		else
+			sb.append(GeoPoint.getDistance(new GeoPoint(m_location.getLatitude(), m_location.getLongitude()), 
+					                       new GeoPoint(p_location.getLatitude(), p_location.getLongitude())));
+		sb.append("\n");
+		
 		tv.setText(sb.toString());
 		
 		m_location = p_location;
