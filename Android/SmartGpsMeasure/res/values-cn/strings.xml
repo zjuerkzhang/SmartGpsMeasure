@@ -1,0 +1,10 @@
+<resources>
+
+    <string name="app_name">GPS测亩仪</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="menu_settings">设置</string>
+    <string name="title_activity_main">GPS状态</string>
+    
+    <string name="toast_gps_disable">GPS处于关闭状态.</string>
+
+</resources>
