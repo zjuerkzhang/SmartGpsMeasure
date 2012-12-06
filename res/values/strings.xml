@@ -19,6 +19,7 @@
     <string name="txt_delta_distance">Delta distance: </string>
     
     <string name="txt_sat_max">Max Sat: </string>
+    <string name="txt_all_sat">Sat in View: </string>
     <string name="txt_use_max">Used Sat: </string>
     
     <string name="txt_gps_disable">DISABLE</string>

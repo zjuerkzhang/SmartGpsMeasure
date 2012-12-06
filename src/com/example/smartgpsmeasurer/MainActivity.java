@@ -1,11 +1,7 @@
 package com.example.smartgpsmeasurer;
 
-import java.util.Iterator;
-
 import android.app.Activity;
 import android.content.Intent;
-import android.location.GpsSatellite;
-import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,79 +12,16 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements LocationListener {
+public class MainActivity extends Activity {
 
 	static final String tag = "Main";
 	static final boolean s_log_switch = true;
 
-	LocationManager m_lm;
-	Location m_location;
+	Location m_my_location;
+	MyGpsStatus m_my_gps_status;
+	boolean m_first_gps_status = true;
 
-	private GpsStatus.Listener m_gsl = new GpsStatus.Listener() {
-		
-		@Override
-		public void onGpsStatusChanged(int event) {
-			// TODO Auto-generated method stub			
-			
-			TextView tv = (TextView)findViewById(R.id.txt_gps_status);
-			if(event==GpsStatus.GPS_EVENT_FIRST_FIX)
-			{
-				myDebugLog(tag, "onGpsStatusChanged");
-				myDebugLog(tag, "===>GPS_EVENT_FIRST_FIX");
-				tv.setTextColor(getResources().getColor(R.color.green));
-				tv.setText(getResources().getString(R.string.txt_gps_fixed));
-			}
-			else if(event==GpsStatus.GPS_EVENT_STARTED)
-			{
-				myDebugLog(tag, "onGpsStatusChanged");
-				myDebugLog(tag, "===>GPS_EVENT_STARTED");
-				tv.setTextColor(getResources().getColor(R.color.yellow));
-				tv.setText(getResources().getString(R.string.txt_gps_fixing));
-			}
-			else if(event==GpsStatus.GPS_EVENT_STOPPED)
-			{
-				myDebugLog(tag, "onGpsStatusChanged");
-				myDebugLog(tag, "===>GPS_EVENT_STOPPED");
-				tv.setTextColor(getResources().getColor(R.color.red));
-				tv.setText(getResources().getString(R.string.txt_gps_disable));
-			}
-			else if(event==GpsStatus.GPS_EVENT_SATELLITE_STATUS)
-			{
-				GpsStatus gs = m_lm.getGpsStatus(null);
-				
-				TextView tv_sat = (TextView) findViewById(R.id.txt_sat_data);
-				tv_sat.setText("");
-				
-				StringBuilder sb = new StringBuilder();
-				sb.append(getResources().getString(R.string.txt_sat_max));
-				sb.append(gs.getMaxSatellites());
-				sb.append("\n");
-				
-				int count = 0;
-				Iterable<GpsSatellite> gps_sat_itb = gs.getSatellites();
-				Iterator<GpsSatellite> gps_sat_itr = gps_sat_itb.iterator();
-				while(gps_sat_itr.hasNext())
-				{					
-					GpsSatellite gps_sat = gps_sat_itr.next();
-					sb.append("#");
-					sb.append(gps_sat.getPrn());
-					sb.append(": SNR=");
-					sb.append(gps_sat.getSnr());
-					if(gps_sat.usedInFix())
-					{
-						sb.append(" Used");
-						count++;
-					}
-					sb.append("\n");
-				}
-				
-				sb.append(getResources().getString(R.string.txt_use_max));
-				sb.append(count);
-				tv_sat.setText(sb.toString());
-				
-			}
-		}
-	};
+	MyLocationListener m_my_loc_listener;
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -96,53 +29,99 @@ public class MainActivity extends Activity implements LocationListener {
 		setContentView(R.layout.activity_main);
 
 		myDebugLog(tag, "onCreate");
-		m_lm = (LocationManager) getSystemService(LOCATION_SERVICE);
+		if(m_my_loc_listener == null)
+		{
+			myDebugLog(tag, "new instance of MyLocationListener in onCreate");
+			m_my_loc_listener = new MyLocationListener((LocationManager)getSystemService(LOCATION_SERVICE),
+					                                   this);
+		}
+		m_first_gps_status = true;
 	}
 
 	@Override
 	public void onStart() {
 		myDebugLog(tag, "onStart");
 		super.onStart();
-		m_lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, this);
-		m_lm.addGpsStatusListener(m_gsl);
+		if(m_my_loc_listener == null)
+		{
+			myDebugLog(tag, "new instance of MyLocationListener in onStart");
+			m_my_loc_listener = new MyLocationListener((LocationManager)getSystemService(LOCATION_SERVICE),
+					                                   this);
+		}
+		m_my_loc_listener.registerLocationService(1000, 0);
 	}
 
 	@Override
 	public void onStop() {
 		myDebugLog(tag, "onStop");
-		m_lm.removeUpdates(this);
-		m_lm.removeGpsStatusListener(m_gsl);
+		if(m_my_loc_listener != null)
+		{
+			m_my_loc_listener.deregisterLocationService();
+		}
 		super.onStop();
 	}
-    /*
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.activity_main, menu);
-		return true;
-	}
-    */
-	private void myDebugLog(String p_tag, String p_msg) {
-		if (s_log_switch)
+    
+	public void onMyGpsStatusUpdate(MyGpsStatus p_gps_status)
+	{
+		myDebugLog(tag, "onMyGpsStatusUpdate");
+		m_my_gps_status = p_gps_status;
+		changeGpsStatusText(p_gps_status);
+		if(m_first_gps_status && p_gps_status==MyGpsStatus.DISABLED)
 		{
-			Log.d(p_tag, p_msg);
-			visibleDebugLog(p_msg);
+			m_first_gps_status = false;
+			Toast.makeText(this, R.string.toast_gps_disable, Toast.LENGTH_SHORT).show();
+			Intent intent = new Intent(
+					android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+			startActivity(intent);
 		}
 	}
 	
-	private void visibleDebugLog(String p_msg)
+	public void onMyGpsLocationUpdate(Location p_location)
 	{
-		TextView tv = (TextView)findViewById(R.id.txt_log);
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(tv.getText());
-		sb.append("\n");
-		sb.append(p_msg);		
-		tv.setText(sb.toString());
+		m_my_location = p_location;
+		changeLocationStatusText(p_location);
 	}
-
-	@Override
-	public void onLocationChanged(Location p_location) {
-		myDebugLog(tag, "onLocationChanged");		
+	
+	public void onMyGpsSatStatusUpdate(int p_total_count, int p_used_count)
+	{
+		changeGpsSatStatusText(p_total_count, p_used_count);
+	}
+	
+	private void changeGpsSatStatusText(int p_total_count, int p_used_count)
+	{
+		StringBuilder sb = new StringBuilder();
+		sb.append(getResources().getString(R.string.txt_sat_max));
+		sb.append(p_total_count);
+		sb.append("\n");
+		sb.append(getResources().getString(R.string.txt_use_max));
+		sb.append(p_used_count);
+		sb.append("\n");		
+	}
+	
+	private void changeGpsStatusText(MyGpsStatus p_gps_status)
+	{
+		TextView tv = (TextView)findViewById(R.id.txt_gps_status);
+		switch (p_gps_status)
+		{
+		case DISABLED:
+			tv.setTextColor(getResources().getColor(R.color.red));
+			tv.setText(this.getString(R.string.txt_gps_disable));
+			break;
+		case FIXING:
+			tv.setTextColor(getResources().getColor(R.color.yellow));
+			tv.setText(this.getString(R.string.txt_gps_fixing));
+			break;
+		case FIXED:
+			tv.setTextColor(getResources().getColor(R.color.green));
+			tv.setText(this.getString(R.string.txt_gps_fixed));
+			break;
+		default:
+			break;
+		}
+		
+	}
+	
+	private void changeLocationStatusText(Location p_location) {
 		
 		Time time = new Time();
 		
@@ -181,68 +160,41 @@ public class MainActivity extends Activity implements LocationListener {
 		sb.append("\n");
 		
 		sb.append(this.getString(R.string.txt_delta_distance));
-		if(m_location==null)
+		if(m_my_location==null)
 			sb.append(0);
 		else
-			sb.append(p_location.distanceTo(m_location));
+			sb.append(p_location.distanceTo(m_my_location));
 		sb.append("\n");
 		
 		sb.append(this.getString(R.string.txt_delta_distance));
-		if(m_location==null)
+		if(m_my_location==null)
 			sb.append(0);
 		else
-			sb.append(GeoPoint.getDistance(new GeoPoint(m_location.getLatitude(), m_location.getLongitude()), 
+			sb.append(GeoPoint.getDistance(new GeoPoint(m_my_location.getLatitude(), m_my_location.getLongitude()), 
 					                       new GeoPoint(p_location.getLatitude(), p_location.getLongitude())));
 		sb.append("\n");
 		
 		tv.setText(sb.toString());
 		
-		m_location = p_location;
+		m_my_location = p_location;
 	}
-
-	@Override
-	public void onProviderDisabled(String p_provider) {
-		myDebugLog(tag, "onProviderDisabled");
-		
-		TextView tv = (TextView)findViewById(R.id.txt_gps_status);
-		tv.setTextColor(getResources().getColor(R.color.red));
-		tv.setText(this.getString(R.string.txt_gps_disable));
-		Toast.makeText(this, R.string.toast_gps_disable, Toast.LENGTH_SHORT).show();
-		Intent intent = new Intent(
-				android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-		startActivity(intent);
-	}
-
-	@Override
-	public void onProviderEnabled(String p_provider) {
-		myDebugLog(tag, "onProviderEnabled");
-		
-		TextView tv = (TextView)findViewById(R.id.txt_gps_status);
-		tv.setTextColor(getResources().getColor(R.color.yellow));
-		tv.setText(this.getString(R.string.txt_gps_fixing));
-	}
-
-	@Override
-	public void onStatusChanged(String p_provider, int p_status, Bundle p_extras) {
-		myDebugLog(tag, "onStatusChanged");
-		
-		TextView tv = (TextView)findViewById(R.id.txt_gps_status);
-		if(p_status==LocationProvider.AVAILABLE)
+	
+	private void myDebugLog(String p_tag, String p_msg) {
+		if (s_log_switch)
 		{
-			myDebugLog(tag, "===>AVAILABLE");
-			tv.setTextColor(getResources().getColor(R.color.green));
-			tv.setText(this.getString(R.string.txt_gps_fixed));
-		}
-		else if(p_status==LocationProvider.TEMPORARILY_UNAVAILABLE)
-		{	
-			myDebugLog(tag, "===>TEMPORARILY_UNAVAILABLE");
-			tv.setTextColor(getResources().getColor(R.color.yellow));
-			tv.setText(this.getString(R.string.txt_gps_fixing));
-		}
-		else if(p_status==LocationProvider.OUT_OF_SERVICE)
-		{
-			myDebugLog(tag, "===>OUT_OF_SERVICE");
+			Log.d(p_tag, p_msg);
+			visibleDebugLog(p_msg);
 		}
 	}
-
+	
+	private void visibleDebugLog(String p_msg)
+	{
+		TextView tv = (TextView)findViewById(R.id.txt_log);
+		
+		StringBuilder sb = new StringBuilder();
+		sb.append(tv.getText());
+		sb.append("\n");
+		sb.append(p_msg);		
+		tv.setText(sb.toString());
+	}
 }
