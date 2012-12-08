@@ -12,8 +12,16 @@
         android:layout_height="wrap_content"
         android:text="@string/txt_gps_disable"
         tools:context=".MainActivity" />
+    <Button
+        android:id="@+id/btn_gps_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/txt_btn_start"
+        android:textColor="@color/green"
+        android:onClick="onButtonClick"
+        android:enabled="false" />
     <ScrollView 
-        android:layout_weight="1"
+        android:layout_weight="3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:scrollbars="vertical"
