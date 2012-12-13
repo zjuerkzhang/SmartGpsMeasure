@@ -21,6 +21,8 @@ public class MainActivity extends Activity {
 	
 	static final String tag = "Main";
 	static final boolean s_log_switch = true;
+	static final boolean s_trial_version = true;
+	static final double s_limit_for_trial_version = 100.0;
 
 	Location m_first_location;
 	Location m_latest_location;
@@ -127,7 +129,14 @@ public class MainActivity extends Activity {
 				m_total_area += GeoPoint.getArea(
 						            new GeoPoint(m_first_location.getLatitude(), m_first_location.getLongitude()),
 						            new GeoPoint(m_latest_location.getLatitude(), m_latest_location.getLongitude()), 
-			                        new GeoPoint(p_location.getLatitude(), p_location.getLongitude()) );				
+			                        new GeoPoint(p_location.getLatitude(), p_location.getLongitude()) );	
+				
+				if(s_trial_version && m_total_distance>s_limit_for_trial_version)
+				{
+					Button btn = (Button) findViewById(R.id.btn_gps_button);
+					btn.performClick();
+					Toast.makeText(this, R.string.toast_trial_hint, Toast.LENGTH_LONG).show();
+				}
 			}
 		}
 		else
