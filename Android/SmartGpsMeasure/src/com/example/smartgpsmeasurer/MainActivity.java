@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -47,7 +46,8 @@ public class MainActivity extends Activity {
 		}
 		m_first_gps_status = true;
 		m_my_gps_status = MyGpsStatus.DISABLED;
-		m_measure_state = MeasureState.IDLE;
+		changeWorkState(MeasureState.IDLE);
+		showMeasureData(0,0);
 		m_total_distance = 0.0;
 		m_total_area = 0.0;
 	}
@@ -110,12 +110,12 @@ public class MainActivity extends Activity {
 	
 	public void onMyGpsLocationUpdate(Location p_location)
 	{
-		changeLocationStatusText(p_location, m_latest_location);
+		showLocationInfo(p_location);
 		
 		if(m_measure_state == MeasureState.FIRST_POINT)
 		{
 			m_first_location = p_location;
-			m_measure_state = MeasureState.WORK;
+			changeWorkState(MeasureState.WORK);
 		}		
 		else if(m_measure_state == MeasureState.WORK)
 		{
@@ -133,7 +133,7 @@ public class MainActivity extends Activity {
 		else
 		{}
 		
-		appendMeasureData(m_total_distance, m_total_area);
+		showMeasureData(m_total_distance, m_total_area);
 		
 		m_latest_location = p_location;
 	}
@@ -149,62 +149,85 @@ public class MainActivity extends Activity {
 		Button btn = (Button) findViewById(R.id.btn_gps_button);
 		if(m_measure_state == MeasureState.IDLE)
 		{
-			m_measure_state = MeasureState.FIRST_POINT;
-			btn.setText(this.getString(R.string.txt_btn_stop));
+			changeWorkState(MeasureState.FIRST_POINT);
+			btn.setText(this.getString(R.string.btn_value_stop));
 			btn.setTextColor(getResources().getColor(R.color.red));
 			m_total_distance = 0.0;
 			m_total_area = 0.0;
 			m_first_location = null;
-			changeLocationStatusText(m_latest_location, null);
-			appendMeasureData(0,0);
+			showMeasureData(0,0);
 		}
 		else
 		{
-			m_measure_state = MeasureState.IDLE;
-			btn.setText(this.getString(R.string.txt_btn_start));
-			btn.setTextColor(getResources().getColor(R.color.green));
+			changeWorkState(MeasureState.IDLE);
+			btn.setText(this.getString(R.string.btn_value_start));
+			btn.setTextColor(getResources().getColor(R.color.bk_color));
+		}
+	}
+	
+	private void changeWorkState(MeasureState p_state)
+	{
+		m_measure_state = p_state;
+		TextView tv = (TextView)findViewById(R.id.txt_id_running_state);
+		switch(p_state)
+		{
+		case IDLE:
+			tv.setText(this.getString(R.string.txt_value_running_idle));
+			break;
+		case FIRST_POINT:
+			tv.setText(this.getString(R.string.txt_value_running_first_point));
+			break;
+		case WORK:
+			tv.setText(this.getString(R.string.txt_value_running_measure));
+			break;
+		default:
+			break;
 		}
 	}
 	
 	private void changeGpsSatStatusText(int p_total_count, int p_used_count)
 	{
-		TextView tv = (TextView)findViewById(R.id.txt_sat_data);
+		TextView tv = (TextView)findViewById(R.id.txt_id_sat_status);
 		StringBuilder sb = new StringBuilder();
-		sb.append(getResources().getString(R.string.txt_sat_max));
-		sb.append(p_total_count);
-		sb.append("\n");
-		sb.append(getResources().getString(R.string.txt_use_max));
 		sb.append(p_used_count);
-		sb.append("\n");		
+		sb.append("/");
+		sb.append(p_total_count);
 		tv.setText(sb.toString());
 	}
 	
 	private void changeGpsStatusText(MyGpsStatus p_gps_status)
 	{
-		TextView tv = (TextView)findViewById(R.id.txt_gps_status);
+		TextView tv = (TextView)findViewById(R.id.txt_id_gps_status);
 		switch (p_gps_status)
 		{
 		case DISABLED:
 			tv.setTextColor(getResources().getColor(R.color.red));
-			tv.setText(this.getString(R.string.txt_gps_disable));
+			tv.setText(this.getString(R.string.txt_value_gps_disable));
 			break;
 		case FIXING:
 			tv.setTextColor(getResources().getColor(R.color.yellow));
-			tv.setText(this.getString(R.string.txt_gps_fixing));
+			tv.setText(this.getString(R.string.txt_value_gps_fixing));
 			break;
 		case FIXED:
 			tv.setTextColor(getResources().getColor(R.color.green));
-			tv.setText(this.getString(R.string.txt_gps_fixed));
+			tv.setText(this.getString(R.string.txt_value_gps_fixed));
 			break;
 		default:
 			break;
-		}
-		
+		}		
 	}
 	
+	private void showLocationInfo(Location p_current_location)
+	{
+		TextView tv = (TextView) findViewById(R.id.txt_id_latitude);
+		tv.setText(String.format("%.6f", p_current_location.getLatitude()));
+		
+		tv = (TextView) findViewById(R.id.txt_id_longitude);
+		tv.setText(String.format("%.6f", p_current_location.getLongitude()));
+	}
+	/*
 	private void changeLocationStatusText(Location p_current_location,
 			                              Location p_last_location) {
-		
 		Time time = new Time();
 		
 		TextView tv = (TextView) findViewById(R.id.txt_gps_data);
@@ -251,38 +274,30 @@ public class MainActivity extends Activity {
 					                        new GeoPoint(p_current_location.getLatitude(), p_current_location.getLongitude())) ) );
 		sb.append("\n");
 		
-		tv.setText(sb.toString());		
+		tv.setText(sb.toString());			
 		
 	}
-	
-	private void appendMeasureData(double p_distance, double p_area)
+	*/
+	private void showMeasureData(double p_distance, double p_area)
 	{
-		TextView tv = (TextView) findViewById(R.id.txt_gps_data);
+		TextView tv = (TextView) findViewById(R.id.txt_id_distance);		
+		tv.setText(String.format("%.2f", p_distance));
 		
-		StringBuilder sb = new StringBuilder();
-		sb.append(tv.getText());
-		
-		sb.append(this.getString(R.string.txt_total_distance));
-		sb.append(String.format("%.2f", p_distance));
-		sb.append("\n");
-		
-		sb.append(this.getString(R.string.txt_total_area));
+		tv = (TextView) findViewById(R.id.txt_id_area);		
 		if(p_area < 0)
 			p_area *= -1;
-		sb.append(String.format("%.2f", p_area));
-		sb.append("\n");
+		tv.setText(String.format("%.2f", p_area));		
 		
-		tv.setText(sb.toString());
 	}
 	
 	private void myDebugLog(String p_tag, String p_msg) {
 		if (s_log_switch)
 		{
 			Log.d(p_tag, p_msg);
-			visibleDebugLog(p_msg);
+			//visibleDebugLog(p_msg);
 		}
 	}
-	
+	/*
 	private void visibleDebugLog(String p_msg)
 	{
 		TextView tv = (TextView)findViewById(R.id.txt_log);
@@ -293,4 +308,5 @@ public class MainActivity extends Activity {
 		sb.append(p_msg);		
 		tv.setText(sb.toString());
 	}
+	*/
 }
