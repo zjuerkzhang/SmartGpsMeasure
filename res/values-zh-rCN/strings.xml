@@ -25,7 +25,7 @@
     <string name="txt_value_initial_value">0.00</string>
     
     <string name="txt_value_running_idle">空闲</string>
-    <string name="txt_value_running_first_point">选取初始点</string>
+    <string name="txt_value_running_first_point">选取初始点，请勿移动</string>
     <string name="txt_value_running_measure">测量中</string>
     
    <string name="txt_value_distance_unit">米</string>
