@@ -38,9 +38,16 @@ public class MainActivity extends Activity {
 	static final boolean s_trial_version = true;
 	static final double s_distance_limit_for_trial_version = 500.0;
 	static final double s_area_limit_for_trial_version = 10000.0;
+	static final int s_point_array_length = 5;
+	static final int s_point_array_avr_buff_len =3;
+	static final double s_max_limit_for_single_valid_movement = 30.0;
+	static final double s_min_limit_for_valid_movement = 3.0;
 
-	Location m_first_location;
-	Location m_latest_location;
+	GeoPoint m_first_point;
+	GeoPoint m_latest_used_point;
+	GeoPoint m_point_array[];
+	int m_latest_point_idx = 0;
+	int m_oldest_count_point_idx = 0;
 	MyGpsStatus m_my_gps_status;
 	boolean m_first_gps_status = true;
 	MeasureState m_measure_state;
@@ -82,6 +89,10 @@ public class MainActivity extends Activity {
 					                                   this);
 		}
 		m_my_loc_listener.registerLocationService(1000, 0);
+		if(m_point_array == null)
+		{
+			m_point_array = new GeoPoint[s_point_array_length];
+		}
 	}
 
 	@Override
@@ -133,36 +144,28 @@ public class MainActivity extends Activity {
 		
 		if(m_measure_state == MeasureState.FIRST_POINT)
 		{
-			m_first_location = p_location;
-			changeWorkState(MeasureState.WORK);
+			if(preparePointArrayBeforeMeasure(new GeoPoint(p_location.getLatitude(),p_location.getLongitude())))
+			{
+				getFirstPoint();
+				changeWorkState(MeasureState.WORK);
+			}			
 		}		
 		else if(m_measure_state == MeasureState.WORK)
 		{
-			if(m_first_location!=null && m_latest_location != null)
+			processComingPoint(new GeoPoint(p_location.getLatitude(),p_location.getLongitude()));
+			
+			if(s_trial_version && 
+			   (m_total_distance>s_distance_limit_for_trial_version || m_total_area>s_area_limit_for_trial_version) )
 			{
-				m_total_distance += GeoPoint.getDistance(
-						            new GeoPoint(m_latest_location.getLatitude(), m_latest_location.getLongitude()), 
-	                                new GeoPoint(p_location.getLatitude(), p_location.getLongitude()));
-				m_total_area += GeoPoint.getArea(
-						            new GeoPoint(m_first_location.getLatitude(), m_first_location.getLongitude()),
-						            new GeoPoint(m_latest_location.getLatitude(), m_latest_location.getLongitude()), 
-			                        new GeoPoint(p_location.getLatitude(), p_location.getLongitude()) );	
-				
-				if(s_trial_version && 
-				   (m_total_distance>s_distance_limit_for_trial_version || m_total_area>s_area_limit_for_trial_version) )
-				{
-					Button btn = (Button) findViewById(R.id.btn_gps_button);
-					btn.performClick();
-					Toast.makeText(this, R.string.toast_trial_hint, Toast.LENGTH_LONG).show();
-				}
+				Button btn = (Button) findViewById(R.id.btn_gps_button);
+				btn.performClick();
+				Toast.makeText(this, R.string.toast_trial_hint, Toast.LENGTH_LONG).show();
 			}
 		}
 		else
 		{}
 		
-		showMeasureData(m_total_distance, m_total_area);
-		
-		m_latest_location = p_location;
+		showMeasureData(m_total_distance, m_total_area);		
 	}
 	
 	public void onMyGpsSatStatusUpdate(int p_total_count, int p_used_count)
@@ -181,7 +184,9 @@ public class MainActivity extends Activity {
 			btn.setTextColor(getResources().getColor(R.color.red));
 			m_total_distance = 0.0;
 			m_total_area = 0.0;
-			m_first_location = null;
+			//m_first_location = null;
+			m_latest_point_idx = 0;
+			m_oldest_count_point_idx = 0;
 			showMeasureData(0,0);
 		}
 		else
@@ -222,6 +227,115 @@ public class MainActivity extends Activity {
 		{}
 		
 		showMeasureData(m_total_distance, m_total_area);
+	}
+	
+	private boolean preparePointArrayBeforeMeasure(GeoPoint p_geo_point)
+	{
+		boolean l_array_ready = false;
+		
+		if(m_latest_point_idx>0 && 
+		   GeoPoint.getDistance(m_point_array[m_latest_point_idx-1], p_geo_point)>s_max_limit_for_single_valid_movement)
+		{
+			return l_array_ready;
+		}
+		
+		m_point_array[m_latest_point_idx] = p_geo_point;
+		m_point_array[m_latest_point_idx].setGeoPointUsed(false);
+		m_latest_point_idx++;
+		
+		if(m_latest_point_idx>=s_point_array_length)
+		{
+			m_latest_point_idx = s_point_array_length - 1;
+			m_oldest_count_point_idx = s_point_array_avr_buff_len - 1;
+			l_array_ready = true;
+		}
+		
+		return l_array_ready;
+	}
+	
+	private void getFirstPoint()
+	{
+		double total_latitude = 0.0;
+		double total_longitude = 0.0;
+		int i;
+		
+		for(i=0; i<s_point_array_length; i++)
+		{
+			total_latitude += m_point_array[i].getLatitude();
+			total_longitude += m_point_array[i].getLongitude();
+		}
+		
+		m_first_point = new GeoPoint(total_latitude/s_point_array_length,
+				                     total_longitude/s_point_array_length,
+				                     false);
+		m_latest_used_point = m_first_point;
+	}
+	
+	private int getPreviousPointIndex(int p_current_idx)
+	{   
+	    if(0==p_current_idx)
+	    	p_current_idx = s_point_array_length-1;
+	    else
+	    	p_current_idx--;
+	         
+	    return p_current_idx;
+	}
+	
+	private int getNextPointIndex(int p_current_idx)
+	{   
+		p_current_idx++;
+	    if(s_point_array_length==p_current_idx)
+	    	p_current_idx = 0;
+	         
+	    return p_current_idx;
+	}
+	
+	private void processComingPoint(GeoPoint p_point)
+	{
+		GeoPoint l_base;
+		double l_base_latitude = 0.0;
+		double l_base_longitude = 0.0;
+		int i, j;
+		
+		if(GeoPoint.getDistance(m_point_array[m_latest_point_idx], p_point)>s_max_limit_for_single_valid_movement)
+		{
+			return;
+		}
+		
+		j = m_oldest_count_point_idx;
+		for(i=0; i<s_point_array_avr_buff_len; i++)
+		{
+			if(m_point_array[j].isGeoPointUsed())
+			{
+				l_base = m_point_array[j];
+				break;
+			}
+			l_base_latitude += m_point_array[j].getLatitude();
+			l_base_longitude += m_point_array[j].getLongitude();
+			j = getPreviousPointIndex(j);
+		}
+		if(i>=s_point_array_avr_buff_len)
+		{
+			l_base = new GeoPoint(l_base_latitude/s_point_array_avr_buff_len,
+					              l_base_longitude/s_point_array_avr_buff_len);			
+		}
+		else
+		{
+			l_base = m_point_array[j];
+		}
+		m_latest_point_idx = getNextPointIndex(m_latest_point_idx);
+		m_oldest_count_point_idx = getNextPointIndex(m_oldest_count_point_idx);
+		m_point_array[m_latest_point_idx] = p_point;
+		m_point_array[m_latest_point_idx].setGeoPointUsed(false);
+		
+		if(GeoPoint.getDistance(p_point, l_base)>s_min_limit_for_valid_movement)
+		{
+			m_total_distance += GeoPoint.getDistance(p_point, m_latest_used_point);
+			m_total_area += GeoPoint.getArea(m_first_point, m_latest_used_point, p_point);
+			
+			m_point_array[m_latest_point_idx].setGeoPointUsed(true);
+			m_latest_used_point = p_point;			
+		}		
 	}
 	
 	private void changeWorkState(MeasureState p_state)

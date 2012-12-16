@@ -5,17 +5,27 @@ public class GeoPoint {
 
 	private double m_latitude;
 	private double m_longitude;
+	private boolean m_used;
 	
 	public GeoPoint()
 	{
 		m_latitude = 0.0;
 		m_longitude = 0.0;
+		m_used = false;
 	}
 	
 	public GeoPoint(double p_latitude, double p_longitude)
 	{
 		m_latitude = p_latitude;
 		m_longitude = p_longitude;
+		m_used = false;
+	}
+	
+	public GeoPoint(double p_latitude, double p_longitude, boolean p_used)
+	{
+		m_latitude = p_latitude;
+		m_longitude = p_longitude;
+		m_used = p_used;
 	}
 	
 	public double getLatitude()
@@ -26,6 +36,16 @@ public class GeoPoint {
 	public double getLongitude()
 	{
 		return m_longitude;
+	}
+	
+	public boolean isGeoPointUsed()
+	{
+		return m_used;
+	}
+	
+	public void setGeoPointUsed(boolean p_used)
+	{
+		m_used = p_used;
 	}
 	
 	public static double getDistance(GeoPoint p_gp_a, GeoPoint p_gp_b)
