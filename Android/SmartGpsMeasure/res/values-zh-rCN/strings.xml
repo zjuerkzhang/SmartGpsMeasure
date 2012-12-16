@@ -1,0 +1,41 @@
+<resources>
+
+    <string name="app_name">便捷GPS测量仪</string>
+    <string name="menu_settings">设置</string>
+    <string name="title_activity_main">便捷GPS测量仪</string>
+    
+    <string name="toast_gps_disable">GPS未启用，请启用GPS.</string>  
+    <string name="toast_trial_hint">本应用为试用版，如需使用完全功能，请购买专业版.</string>  
+   
+    <string name="btn_value_start">开始测量</string>
+    <string name="btn_value_stop">停止测量</string>
+    
+    <string name="txt_static_gps_status_guide">GPS状态: </string>
+    <string name="txt_static_sat_status_guide">卫星状态(使用数/总数): </string>
+    <string name="txt_static_latitude_guide">纬度: </string>
+    <string name="txt_static_longitude_guide">经度: </string>
+    <string name="txt_static_distance_guide">总长: </string>
+    <string name="txt_static_area_guide">面积: </string>
+    
+    <string name="txt_value_gps_disable">GPS未启用</string>
+    <string name="txt_value_gps_fixing">GPS定位中</string>
+    <string name="txt_value_gps_fixed">GPS锁定</string>
+    
+    <string name="txt_value_sat_intial_value">0/0</string>
+    <string name="txt_value_initial_value">0.00</string>
+    
+    <string name="txt_value_running_idle">空闲</string>
+    <string name="txt_value_running_first_point">选取初始点</string>
+    <string name="txt_value_running_measure">测量中</string>
+    
+   <string name="txt_value_distance_unit">米</string>
+    <string name="txt_value_distance_km">千米</string>
+    <string name="txt_value_distance_feet">英尺</string>
+    <string name="txt_value_distance_mile">英里</string>
+    
+    <string name="txt_value_area_unit">平方米</string>
+    <string name="txt_value_area_hectare">公顷</string>
+    <string name="txt_value_area_acre">英亩</string>
+    <string name="txt_value_area_mu">亩</string>
+    
+</resources>
