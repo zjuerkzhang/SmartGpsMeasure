@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name">便捷GPS测量仪</string>
-    <string name="menu_settings">设置</string>
+    <string name="menu_settings">关于</string>
     <string name="title_activity_main">便捷GPS测量仪</string>
     
     <string name="toast_gps_disable">GPS未启用，请启用GPS.</string>  
@@ -37,5 +37,17 @@
     <string name="txt_value_area_hectare">公顷</string>
     <string name="txt_value_area_acre">英亩</string>
     <string name="txt_value_area_mu">亩</string>
+    
+    <string name="txt_about_dialog_title">关于 便捷GPS测量仪</string>
+    <string name="txt_about_dialog_instruction_guide">使用说明: </string>
+    <string name="txt_about_dialog_instruction">点击开始按钮后，请保持位置不变5秒左右，便于确定精确起点。开始测量后，沿被测区域的外围行进，行进过程中总长和面积自动累计。完成行进后，点击停止按钮，获取最终结果。</string>
+    <string name="txt_about_dialog_trial_guide">试用版说明: </string>
+    <string name="txt_about_dialog_trial_info">总长测量限制为500米，\n面积测量限制为10000平方米。 </string>
+    <string name="txt_about_dialog_author_guide">作者: </string>
+    <string name="txt_about_dialog_author">Kevin Zhang</string>
+    <string name="txt_about_dialog_email_guide">Email: </string>
+    <string name="txt_about_dialog_email">2350909598@qq.com</string>
+    
+    <string name="txt_about_dialog_ok">确定</string>
     
 </resources>
