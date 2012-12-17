@@ -1,11 +1,14 @@
 package com.example.smartgpsmeasurer;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -105,6 +108,44 @@ public class MainActivity extends Activity {
 		super.onStop();
 	}
     
+	@Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.activity_main, menu);
+        return true;
+    }
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		StringBuilder sb = new StringBuilder("");
+		sb.append(this.getString(R.string.txt_about_dialog_instruction_guide));
+		sb.append("\n");
+		sb.append(this.getString(R.string.txt_about_dialog_instruction));
+		sb.append("\n");
+		sb.append("\n");
+		if(s_trial_version)
+		{
+			sb.append(this.getString(R.string.txt_about_dialog_trial_guide));
+			sb.append("\n");
+			sb.append(this.getString(R.string.txt_about_dialog_trial_info));
+			sb.append("\n");	
+			sb.append("\n");
+		}
+		sb.append(this.getString(R.string.txt_about_dialog_author_guide));
+		sb.append(this.getString(R.string.txt_about_dialog_author));
+		sb.append("\n");
+		sb.append(this.getString(R.string.txt_about_dialog_email_guide));
+		sb.append(this.getString(R.string.txt_about_dialog_email));
+		
+		new AlertDialog.Builder(this)
+		.setTitle(this.getString(R.string.txt_about_dialog_title))
+		.setMessage(sb.toString())
+		.setPositiveButton(this.getString(R.string.txt_about_dialog_ok), null)
+		.show();
+		
+		return false;
+	}
+	
 	public void onMyGpsStatusUpdate(MyGpsStatus p_gps_status)
 	{
 		myDebugLog(tag, "onMyGpsStatusUpdate");				

@@ -1,7 +1,7 @@
 <resources>
 
     <string name="app_name">Sinple GPS Measurer</string>
-    <string name="menu_settings">Settings</string>
+    <string name="menu_settings">About</string>
     <string name="title_activity_main">Sinple GPS Measurer</string>
     
     <string name="toast_gps_disable">GPS is disable.</string>  
@@ -37,5 +37,17 @@
     <string name="txt_value_area_hectare">hectare</string>
     <string name="txt_value_area_acre">acre</string>
     <string name="txt_value_area_mu">Mu</string>
+    
+    <string name="txt_about_dialog_title">About Single GPS measurer</string>
+    <string name="txt_about_dialog_instruction_guide">Instruction: </string>
+    <string name="txt_about_dialog_instruction">After clicking button to start, please stay at a location to get the start point. Then Walk around the area to be measured. After finishing the measurement, you can get the result by clicking button.</string>
+    <string name="txt_about_dialog_trial_guide">Trial limit info: </string>
+    <string name="txt_about_dialog_trial_info">Distance Limit: 500m\nArea Limit: 10000sq.m.</string>
+    <string name="txt_about_dialog_author_guide">author: </string>
+    <string name="txt_about_dialog_author">Kevin Zhang</string>
+    <string name="txt_about_dialog_email_guide">Email: </string>
+    <string name="txt_about_dialog_email">2350909598@qq.com</string>
+    
+    <string name="txt_about_dialog_ok">OK</string>
     
 </resources>
