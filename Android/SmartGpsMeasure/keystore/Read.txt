@@ -1,0 +1,1 @@
+SmartGpsMeasure: keystore for the project of Desktop, and pwd is same with the pwd in web site
