@@ -214,5 +214,9 @@
             android:clickable="true"
             android:onClick="onAreaUnitTextClick"
             tools:context=".MainActivity" />
-    </LinearLayout>    
+    </LinearLayout>  
+    <com.example.smartgpsmeasurer.TrackView 
+        android:id="@+id/view_id_trackview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
 </LinearLayout>

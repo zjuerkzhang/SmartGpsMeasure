@@ -61,12 +61,15 @@ public class MainActivity extends Activity {
 
 	MyLocationListener m_my_loc_listener;
 	
+	private TrackView mTrackview;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
 		myDebugLog(tag, "onCreate");
+		mTrackview = (TrackView)findViewById(R.id.view_id_trackview);
 		if(m_my_loc_listener == null)
 		{
 			myDebugLog(tag, "new instance of MyLocationListener in onCreate");
@@ -78,7 +81,7 @@ public class MainActivity extends Activity {
 		changeWorkState(MeasureState.IDLE);
 		showMeasureData(0,0);
 		m_total_distance = 0.0;
-		m_total_area = 0.0;
+		m_total_area = 0.0;		
 	}
 
 	@Override
@@ -220,6 +223,7 @@ public class MainActivity extends Activity {
 		Button btn = (Button) findViewById(R.id.btn_gps_button);
 		if(m_measure_state == MeasureState.IDLE)
 		{
+			mTrackview.ClearAllPoint();
 			changeWorkState(MeasureState.FIRST_POINT);
 			btn.setText(this.getString(R.string.btn_value_stop));
 			btn.setTextColor(getResources().getColor(R.color.red));
@@ -375,7 +379,9 @@ public class MainActivity extends Activity {
 			m_total_area += GeoPoint.getArea(m_first_point, m_latest_used_point, p_point);
 			
 			m_point_array[m_latest_point_idx].setGeoPointUsed(true);
-			m_latest_used_point = p_point;			
+			m_latest_used_point = p_point;	
+			
+			mTrackview.AddNewPoint(GeoPoint.convertGeo2Cart(p_point));
 		}		
 	}
 	
