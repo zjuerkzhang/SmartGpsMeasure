@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="area_units">  
+        <item>sq.m.</item>  
+        <item>hectare</item>  
+        <item>acre</item>  
+        <item>Mu</item> 
+    </string-array>
+</resources>

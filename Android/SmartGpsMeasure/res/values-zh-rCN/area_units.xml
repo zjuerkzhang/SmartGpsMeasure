@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="area_units">  
+        <item>平方米</item>  
+        <item>公顷</item>  
+        <item>英亩</item>  
+        <item>亩</item> 
+    </string-array>
+</resources>
