@@ -163,18 +163,13 @@
             android:textSize="25sp"
             android:text="@string/txt_value_initial_value"
             tools:context=".MainActivity" />
-        <TextView     
-            android:id="@+id/txt_id_distance_unit"
-            android:layout_width="80dp"
+        <Spinner     
+            android:id="@+id/spinner_id_distance_unit"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:background="@color/bk_color"
-            android:textColor="@color/white"
             android:textSize="15sp"
-            android:paddingLeft="5dp"
-            android:text="@string/txt_value_distance_unit"
-            android:clickable="true"
-            android:onClick="onDistanceUnitTextClick"
-            tools:context=".MainActivity" />
+            android:paddingLeft="5dp" />
+
     </LinearLayout>
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -202,18 +197,13 @@
             android:textSize="25sp"
             android:text="@string/txt_value_initial_value"
             tools:context=".MainActivity" />
-        <TextView     
-            android:id="@+id/txt_id_area_unit"
-            android:layout_width="80dp"
+        <Spinner     
+            android:id="@+id/spinner_id_area_unit"
+            android:layout_width="120dp"
             android:layout_height="wrap_content"
-            android:background="@color/bk_color"
-            android:textColor="@color/white"
             android:textSize="15sp"
-            android:paddingLeft="5dp"
-            android:text="@string/txt_value_area_unit"
-            android:clickable="true"
-            android:onClick="onAreaUnitTextClick"
-            tools:context=".MainActivity" />
+            android:paddingLeft="5dp" />
+
     </LinearLayout>  
     <com.example.smartgpsmeasurer.TrackView 
         android:id="@+id/view_id_trackview"

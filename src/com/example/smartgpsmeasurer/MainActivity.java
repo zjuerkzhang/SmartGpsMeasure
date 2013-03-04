@@ -10,7 +10,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +39,34 @@ public class MainActivity extends Activity {
 		ACRE,
 		MU
 	};
+	
+	class SpinnerLengthUnitSelectedListener implements OnItemSelectedListener{  
+        public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,  
+                long arg3) {  
+        	int id = (int)arg3;
+        	m_distance_unit = DistanceUnitType.values()[id];
+        	showMeasureData(m_total_distance, m_total_area);
+        }  
+  
+        public void onNothingSelected(AdapterView<?> arg0) {  
+              
+        }  
+          
+    }  
+	
+	class SpinnerAreaUnitSelectedListener implements OnItemSelectedListener{  
+        public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,  
+                long arg3) {  
+        	int id = (int)arg3;
+        	m_area_unit = AreaUnitType.values()[id];
+        	showMeasureData(m_total_distance, m_total_area);
+        }  
+  
+        public void onNothingSelected(AdapterView<?> arg0) {  
+              
+        }  
+          
+    }  
 	
 	static final String tag = "Main";
 	static final boolean s_log_switch = true;
@@ -62,6 +94,8 @@ public class MainActivity extends Activity {
 	MyLocationListener m_my_loc_listener;
 	
 	private TrackView mTrackview;
+	private Spinner length_unit_spinner, area_unit_spinner;
+	private ArrayAdapter length_unit_adapter, area_unit_adapter; 
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -70,6 +104,21 @@ public class MainActivity extends Activity {
 
 		myDebugLog(tag, "onCreate");
 		mTrackview = (TrackView)findViewById(R.id.view_id_trackview);
+		
+		length_unit_spinner = (Spinner)findViewById(R.id.spinner_id_distance_unit);
+		length_unit_adapter = ArrayAdapter.createFromResource(this, R.array.length_units, android.R.layout.simple_spinner_item);  
+		length_unit_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);		
+		length_unit_spinner.setAdapter(length_unit_adapter);
+		length_unit_spinner.setOnItemSelectedListener(new SpinnerLengthUnitSelectedListener());		
+		length_unit_spinner.setVisibility(View.VISIBLE);
+		
+		area_unit_spinner = (Spinner)findViewById(R.id.spinner_id_area_unit);
+		area_unit_adapter = ArrayAdapter.createFromResource(this, R.array.area_units, android.R.layout.simple_spinner_item);  
+		area_unit_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);		
+		area_unit_spinner.setAdapter(area_unit_adapter);
+		area_unit_spinner.setOnItemSelectedListener(new SpinnerAreaUnitSelectedListener());		
+		area_unit_spinner.setVisibility(View.VISIBLE);
+		
 		if(m_my_loc_listener == null)
 		{
 			myDebugLog(tag, "new instance of MyLocationListener in onCreate");
@@ -498,19 +547,20 @@ public class MainActivity extends Activity {
 		
 	}
 	*/
+	
 	private void showMeasureData(double p_distance, double p_area)
 	{
 		TextView tv = (TextView) findViewById(R.id.txt_id_distance);		
 		tv.setText(String.format("%.2f", p_distance*getDistanceConversionRate(m_distance_unit)));
-		tv = (TextView)findViewById(R.id.txt_id_distance_unit);
-		tv.setText(getDistanceUnitText(m_distance_unit));
+		//tv = (TextView)findViewById(R.id.txt_id_distance_unit);
+		//tv.setText(getDistanceUnitText(m_distance_unit));
 		
 		tv = (TextView) findViewById(R.id.txt_id_area);		
 		if(p_area < 0)
 			p_area *= -1;
 		tv.setText(String.format("%.2f", p_area*getAreaConversionRate(m_area_unit)));
-		tv = (TextView)findViewById(R.id.txt_id_area_unit);
-		tv.setText(getAreaUnitText(m_area_unit));
+		//tv = (TextView)findViewById(R.id.txt_id_area_unit);
+		//tv.setText(getAreaUnitText(m_area_unit));
 		
 	}
 	
