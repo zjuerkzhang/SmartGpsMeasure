@@ -68,10 +68,10 @@
         android:paddingLeft="2dp"
         android:orientation="horizontal" >
         <TextView            
-            android:layout_width="100dp"
+            android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:background="@color/bk_color"
-            android:text="@string/txt_static_latitude_guide"
+            android:text="@string/txt_static_lati_long_guide"
             android:textColor="@color/white"
             android:textSize="15sp"
             tools:context=".MainActivity" />
@@ -84,22 +84,6 @@
             android:textColor="@color/white"
             android:textSize="20sp"
             tools:context=".MainActivity" />      
-    </LinearLayout>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/bk_color"
-        android:paddingLeft="2dp"
-        android:orientation="horizontal" >
-        <TextView            
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:background="@color/bk_color"
-            android:text="@string/txt_static_longitude_guide"
-            android:textColor="@color/white"
-            android:textSize="15sp"
-            tools:context=".MainActivity" />
         <TextView
             android:id="@+id/txt_id_longitude"
             android:layout_weight="1"
@@ -127,6 +111,16 @@
             android:textSize="18sp"
             android:text="@string/txt_value_running_idle"
             tools:context=".MainActivity" />
+        <Button
+            android:id="@+id/btn_cal_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_static_calculate"
+            android:visibility="gone"
+            android:textColor="@color/bk_color"
+            android:textSize="18sp"
+            android:onClick="onCalButtonClick"
+            android:enabled="true" />
         <Button
             android:id="@+id/btn_gps_button"
             android:layout_width="wrap_content"
@@ -204,7 +198,7 @@
             android:textSize="15sp"
             android:paddingLeft="5dp" />
 
-    </LinearLayout>  
+    </LinearLayout>      
     <com.example.smartgpsmeasurer.TrackView 
         android:id="@+id/view_id_trackview"
         android:layout_width="match_parent"
