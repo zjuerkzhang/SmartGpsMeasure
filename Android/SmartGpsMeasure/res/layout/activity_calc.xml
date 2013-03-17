@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bk_color" >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bk_color"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:orientation="horizontal" >
+        <TextView     
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:background="@color/bk_color"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:text="@string/txt_static_area_guide"
+            tools:context=".MainActivity" />
+        <TextView     
+            android:id="@+id/txt_id_cal_area"
+            android:layout_weight="2"       
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:background="@color/bk_color"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            tools:context=".MainActivity" />
+        <TextView     
+            android:id="@+id/txt_id_cal_area_unit"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:background="@color/bk_color"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:paddingLeft="5dp"
+            tools:context=".MainActivity" />       
+        </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bk_color"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:orientation="horizontal" >
+        <TextView     
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:background="@color/bk_color"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:text="@string/txt_static_total_price_guide"
+            tools:context=".MainActivity" />
+        <TextView     
+            android:id="@+id/txt_id_cal_unit_price"
+            android:layout_weight="2"       
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:background="@color/bk_color"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            tools:context=".MainActivity" />
+        <TextView     
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:background="@color/bk_color"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:paddingLeft="5dp"
+            android:text="@string/txt_static_money_unit"
+            tools:context=".MainActivity" />       
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bk_color"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:orientation="horizontal" >
+        <TextView     
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:background="@color/bk_color"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:text="@string/txt_static_unit_price_guide"
+            tools:context=".MainActivity" />
+        <TextView     
+            android:id="@+id/txt_id_cal_total_price"
+            android:layout_weight="2"       
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:background="@color/bk_color"
+            android:textColor="@color/white"
+            android:textSize="25sp"
+            tools:context=".MainActivity" />
+        <TextView     
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:background="@color/bk_color"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            android:paddingLeft="5dp"
+            android:text="@string/txt_static_money_unit"
+            tools:context=".MainActivity" />       
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bk_color"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:paddingTop="20dp"
+        android:orientation="horizontal" >
+        <Button
+            android:id="@+id/btn_cal_1"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_1"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        <Button
+            android:id="@+id/btn_cal_2"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_2"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        <Button
+            android:id="@+id/btn_cal_3"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_3"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        <Button
+            android:id="@+id/btn_cal_c"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_C"
+            android:textColor="@color/blue"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bk_color"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:orientation="horizontal" >
+        <Button
+            android:id="@+id/btn_cal_4"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_4"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        <Button
+            android:id="@+id/btn_cal_5"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_5"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        <Button
+            android:id="@+id/btn_cal_6"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_6"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        <Button
+            android:id="@+id/btn_cal_dot"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_dot"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bk_color"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:orientation="horizontal" >
+        <Button
+            android:id="@+id/btn_cal_7"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_7"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        <Button
+            android:id="@+id/btn_cal_8"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_8"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        <Button
+            android:id="@+id/btn_cal_9"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_9"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        <Button
+            android:id="@+id/btn_cal_0"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_pad_num_0"
+            android:onClick="onNumPadClick"
+            android:textSize="18sp"/>
+        </LinearLayout>
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bk_color"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:orientation="horizontal"
+        android:gravity="right" >
+        <Button
+            android:id="@+id/btn_cal_btn"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:text="@string/btn_cal_btn"
+            android:onClick="onCalculate"
+            android:textSize="18sp"/>        
+        </LinearLayout>
+</LinearLayout>
