@@ -1,5 +1,8 @@
 package com.example.smartgpsmeasurer;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -77,10 +80,13 @@ public class MainActivity extends Activity {
 	static final int s_point_array_avr_buff_len =3;
 	static final double s_max_limit_for_single_valid_movement = 30.0;
 	static final double s_min_limit_for_valid_movement = 3.0;
+	public static final String EXTRA_MEASUREMENT = "com.example.smartgpsmeasurer.MEASUREMENT";
+	public static final String EXTRA_UNIT = "com.example.smartgpsmeasurer.UNIT";
 
 	GeoPoint m_first_point;
 	GeoPoint m_latest_used_point;
 	GeoPoint m_point_array[];
+	ArrayList<GeoPoint> m_used_point_list = new ArrayList<GeoPoint>();
 	int m_latest_point_idx = 0;
 	int m_oldest_count_point_idx = 0;
 	MyGpsStatus m_my_gps_status;
@@ -97,12 +103,16 @@ public class MainActivity extends Activity {
 	private Spinner length_unit_spinner, area_unit_spinner;
 	private ArrayAdapter length_unit_adapter, area_unit_adapter; 
 	
+	private Button btn_start, btn_cal;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
 		myDebugLog(tag, "onCreate");
+		btn_start = (Button)findViewById(R.id.btn_gps_button);
+		btn_cal = (Button)findViewById(R.id.btn_cal_button);
 		mTrackview = (TrackView)findViewById(R.id.view_id_trackview);
 		
 		length_unit_spinner = (Spinner)findViewById(R.id.spinner_id_distance_unit);
@@ -162,40 +172,56 @@ public class MainActivity extends Activity {
     
 	@Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
+		super.onCreateOptionsMenu(menu);
+		
+		menu.add(1, 1, 1, this.getString(R.string.menu_history));
+		menu.add(1, 2, 2, this.getString(R.string.menu_settings));
         return true;
     }
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		StringBuilder sb = new StringBuilder("");
-		sb.append(this.getString(R.string.txt_about_dialog_instruction_guide));
-		sb.append("\n");
-		sb.append(this.getString(R.string.txt_about_dialog_instruction));
-		sb.append("\n");
-		sb.append("\n");
-		if(s_trial_version)
+		switch (item.getItemId())
 		{
-			sb.append(this.getString(R.string.txt_about_dialog_trial_guide));
+		case 1:
+			Intent intent = new Intent(this, DBFileList.class);
+			startActivity(intent);
+			break;
+		case 2:
+			StringBuilder sb = new StringBuilder("");
+			sb.append(this.getString(R.string.txt_about_dialog_instruction_guide));
 			sb.append("\n");
-			sb.append(this.getString(R.string.txt_about_dialog_trial_info));
-			sb.append("\n");	
+			sb.append(this.getString(R.string.txt_about_dialog_instruction));
 			sb.append("\n");
-		}
-		sb.append(this.getString(R.string.txt_about_dialog_author_guide));
-		sb.append(this.getString(R.string.txt_about_dialog_author));
-		sb.append("\n");
-		sb.append(this.getString(R.string.txt_about_dialog_email_guide));
-		sb.append(this.getString(R.string.txt_about_dialog_email));
+			sb.append("\n");
+			if(s_trial_version)
+			{
+				sb.append(this.getString(R.string.txt_about_dialog_trial_guide));
+				sb.append("\n");
+				sb.append(this.getString(R.string.txt_about_dialog_trial_info));
+				sb.append("\n");	
+				sb.append("\n");
+			}
+			sb.append(this.getString(R.string.txt_about_dialog_author_guide));
+			sb.append(this.getString(R.string.txt_about_dialog_author));
+			sb.append("\n");
+			sb.append(this.getString(R.string.txt_about_dialog_email_guide));
+			sb.append(this.getString(R.string.txt_about_dialog_email));
+			
+			new AlertDialog.Builder(this)
+			.setTitle(this.getString(R.string.txt_about_dialog_title))
+			.setMessage(sb.toString())
+			.setPositiveButton(this.getString(R.string.txt_about_dialog_ok), null)
+			.show();
+			break;
 		
-		new AlertDialog.Builder(this)
-		.setTitle(this.getString(R.string.txt_about_dialog_title))
-		.setMessage(sb.toString())
-		.setPositiveButton(this.getString(R.string.txt_about_dialog_ok), null)
-		.show();
+		default:
+	        //????¨®D¡ä|¨¤¨ª¦Ì?¨º??t¡ê???????¨¤¨¤¨¤¡ä¡ä|¨¤¨ª
+	        return super.onOptionsItemSelected(item);
+		}		
 		
-		return false;
+		return true;
 	}
 	
 	public void onMyGpsStatusUpdate(MyGpsStatus p_gps_status)
@@ -212,18 +238,17 @@ public class MainActivity extends Activity {
 		
 		changeGpsStatusText(p_gps_status);
 		
-		Button btn = (Button) findViewById(R.id.btn_gps_button);
 		switch(p_gps_status)
 		{
 		case DISABLED:		
 		case FIXING:
 			if(m_measure_state == MeasureState.IDLE)
 			{
-				btn.setEnabled(false);
+				btn_start.setEnabled(false);
 			}				
 			break;
 		case FIXED:
-			btn.setEnabled(true);
+			btn_start.setEnabled(true);
 			break;
 		default:
 			break;
@@ -250,8 +275,7 @@ public class MainActivity extends Activity {
 			if(s_trial_version && 
 			   (m_total_distance>s_distance_limit_for_trial_version || m_total_area>s_area_limit_for_trial_version) )
 			{
-				Button btn = (Button) findViewById(R.id.btn_gps_button);
-				btn.performClick();
+				btn_start.performClick();
 				Toast.makeText(this, R.string.toast_trial_hint, Toast.LENGTH_LONG).show();
 			}
 		}
@@ -269,26 +293,53 @@ public class MainActivity extends Activity {
 	public void onButtonClick(View p_view)
 	{
 		myDebugLog(tag, "onButtonClick");
-		Button btn = (Button) findViewById(R.id.btn_gps_button);
 		if(m_measure_state == MeasureState.IDLE)
 		{
 			mTrackview.ClearAllPoint();
 			changeWorkState(MeasureState.FIRST_POINT);
-			btn.setText(this.getString(R.string.btn_value_stop));
-			btn.setTextColor(getResources().getColor(R.color.red));
+			btn_start.setText(this.getString(R.string.btn_value_stop));
+			btn_start.setTextColor(getResources().getColor(R.color.red));
 			m_total_distance = 0.0;
 			m_total_area = 0.0;
 			//m_first_location = null;
 			m_latest_point_idx = 0;
 			m_oldest_count_point_idx = 0;
 			showMeasureData(0,0);
+			btn_cal.setVisibility(View.GONE);
+			m_used_point_list.clear();
 		}
 		else
 		{
+			if(m_measure_state == MeasureState.WORK)
+			{
+				Calendar c = Calendar.getInstance();
+				String curr_time_str = String.format("%04d-%02d-%02d--%02d-%02d-%02d.db", 
+						c.get(Calendar.YEAR),
+						c.get(Calendar.MONTH),
+						c.get(Calendar.DATE),
+						c.get(Calendar.HOUR),
+						c.get(Calendar.MINUTE),
+						c.get(Calendar.SECOND));
+				DBManager dbm = new DBManager(this, curr_time_str);
+				dbm.add(m_used_point_list);
+				dbm.closeDB();
+				btn_cal.setVisibility(View.VISIBLE);
+			}
 			changeWorkState(MeasureState.IDLE);
-			btn.setText(this.getString(R.string.btn_value_start));
-			btn.setTextColor(getResources().getColor(R.color.bk_color));
+			btn_start.setText(this.getString(R.string.btn_value_start));
+			btn_start.setTextColor(getResources().getColor(R.color.bk_color));			
 		}
+	}
+	
+	public void onCalButtonClick(View p_view)
+	{
+		myDebugLog(tag, "onCalButtonClick");
+		
+		Intent intent = new Intent(this, CalcActivity.class);
+		TextView tv = (TextView) findViewById(R.id.txt_id_area);
+		intent.putExtra(EXTRA_MEASUREMENT, tv.getText().toString());
+		intent.putExtra(EXTRA_UNIT, getAreaUnitText(m_area_unit));
+		startActivity(intent);
 	}
 	
 	public void onDistanceUnitTextClick(View p_view)
@@ -429,6 +480,7 @@ public class MainActivity extends Activity {
 			
 			m_point_array[m_latest_point_idx].setGeoPointUsed(true);
 			m_latest_used_point = p_point;	
+			m_used_point_list.add(p_point);
 			
 			mTrackview.AddNewPoint(GeoPoint.convertGeo2Cart(p_point));
 		}		

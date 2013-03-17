@@ -1,6 +1,7 @@
 <resources>
 
     <string name="app_name">Sinple GPS Measurer</string>
+    <string name="menu_history">History</string>
     <string name="menu_settings">About</string>
     <string name="title_activity_main">Sinple GPS Measurer</string>
     
@@ -14,6 +15,7 @@
     <string name="txt_static_sat_status_guide">Sat Status(Used/Total): </string>
     <string name="txt_static_latitude_guide">Latitude: </string>
     <string name="txt_static_longitude_guide">Longitude: </string>
+    <string name="txt_static_lati_long_guide">Location: </string>
     <string name="txt_static_distance_guide">Distance: </string>
     <string name="txt_static_area_guide">Area: </string>
     
@@ -36,7 +38,13 @@
     <string name="txt_value_area_unit">sq.m.</string>
     <string name="txt_value_area_hectare">hectare</string>
     <string name="txt_value_area_acre">acre</string>
-    <string name="txt_value_area_mu">Mu</string>
+    <string name="txt_value_area_mu">Mu</string>   
+    
+    <string name="btn_static_calculate">Calculate</string>
+    <string name="txt_static_unit_price_guide">Unit Price: </string>
+    <string name="txt_static_total_price_guide">Total Price: </string>
+    <string name="txt_static_unit_price_unit">$/sq.m.</string>
+    <string name="txt_static_money_unit">$</string>
     
     <string name="txt_about_dialog_title">About Single GPS measurer</string>
     <string name="txt_about_dialog_instruction_guide">Instruction: </string>
@@ -49,5 +57,19 @@
     <string name="txt_about_dialog_email">2350909598@qq.com</string>
     
     <string name="txt_about_dialog_ok">OK</string>
+    
+    <string name="btn_cal_pad_num_1">1</string>
+    <string name="btn_cal_pad_num_2">2</string>
+    <string name="btn_cal_pad_num_3">3</string>
+    <string name="btn_cal_pad_num_4">4</string>
+    <string name="btn_cal_pad_num_5">5</string>
+    <string name="btn_cal_pad_num_6">6</string>
+    <string name="btn_cal_pad_num_7">7</string>
+    <string name="btn_cal_pad_num_8">8</string>
+    <string name="btn_cal_pad_num_9">9</string>
+    <string name="btn_cal_pad_num_0">0</string>
+    <string name="btn_cal_pad_num_dot">.</string>
+    <string name="btn_cal_pad_num_C">C</string>
+    <string name="btn_cal_btn">Calculate</string>
     
 </resources>

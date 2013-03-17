@@ -46,7 +46,7 @@ public class TrackView extends View {
     	super.onDraw(canvas);       
         
         mPaint.setColor(Color.GREEN);
-        
+        /*
         canvas.drawLine((float)mCenterPoint.getX()-mMaxCanvasRadius*3/4, 
         		(float)mCenterPoint.getY(), 
         		(float)mCenterPoint.getX()+mMaxCanvasRadius*3/4, 
@@ -57,23 +57,23 @@ public class TrackView extends View {
         		(float)mCenterPoint.getX(), 
         		(float)mCenterPoint.getY()+mMaxCanvasRadius*3/4,
         		mPaint);
-        
+        */
         mPaint.setStyle(Paint.Style.STROKE);
         canvas.drawCircle((float)mCenterPoint.getX(), 
         		(float)mCenterPoint.getY(), 
-        		mMaxCanvasRadius*1/3, 
+        		3, 
         		mPaint);
-        
+        /*
         canvas.drawCircle((float)mCenterPoint.getX(), 
         		(float)mCenterPoint.getY(), 
         		mMaxCanvasRadius*2/3, 
         		mPaint);
-        
+        */
         if(mTrack.size() >= 2)
         {
         	mPaint.setColor(Color.WHITE);
         	int i = 1;
-        	double l_factor = mMaxCanvasRadius/mMaxGeoRadius;
+        	double l_factor = mMaxCanvasRadius/mMaxGeoRadius*19/20;
         	for( ;i < mTrack.size();i++)
         	{
         		canvas.drawLine((int)Math.floor(mTrack.get(i-1).getX()*l_factor + mCenterPoint.getX()), 
@@ -82,6 +82,24 @@ public class TrackView extends View {
         		        (int)Math.floor(mTrack.get(i).getY()*l_factor + mCenterPoint.getY()), 
         		        mPaint);
         	}
+        	i--;
+        	mPaint.setColor(Color.YELLOW);
+        	mPaint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle((float)(mTrack.get(i).getX()*l_factor + mCenterPoint.getX()), 
+            		          (float)(mTrack.get(i).getY()*l_factor + mCenterPoint.getY()), 
+            		          3, 
+            		          mPaint);
+            
+            canvas.drawLine((float)(mTrack.get(i).getX()*l_factor + mCenterPoint.getX())-6, 
+            		(float)(mTrack.get(i).getY()*l_factor + mCenterPoint.getY()), 
+            		(float)(mTrack.get(i).getX()*l_factor + mCenterPoint.getX())+6, 
+            		(float)(mTrack.get(i).getY()*l_factor + mCenterPoint.getY()),
+            		mPaint);
+            canvas.drawLine((float)(mTrack.get(i).getX()*l_factor + mCenterPoint.getX()), 
+            		(float)(mTrack.get(i).getY()*l_factor + mCenterPoint.getY())-6, 
+            		(float)(mTrack.get(i).getX()*l_factor + mCenterPoint.getX()), 
+            		(float)(mTrack.get(i).getY()*l_factor + mCenterPoint.getY())+6,
+            		mPaint);        	
         }
         
         /*
