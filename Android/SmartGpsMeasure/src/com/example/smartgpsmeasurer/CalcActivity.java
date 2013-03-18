@@ -29,6 +29,8 @@ public class CalcActivity extends Activity {
         tv.setText(measurement);
         tv = (TextView)findViewById(R.id.txt_id_cal_area_unit);
         tv.setText(unit);
+        tv = (TextView)findViewById(R.id.txt_id_cal_unit_price_unit);
+        tv.setText(this.getString(R.string.txt_static_money_unit)+"/"+unit);
     }
 	
 	public void onNumPadClick(View p_view)
