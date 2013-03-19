@@ -217,7 +217,7 @@ public class MainActivity extends Activity {
 			break;
 		
 		default:
-	        //????óD′|àíμ?ê??t￡???????ààà′′|àí
+	        //对没有处理的事件，交给父类来处理
 	        return super.onOptionsItemSelected(item);
 		}		
 		
