@@ -134,8 +134,12 @@ public class TrackView extends View {
     		double l_new_radius = Point.getDistance(new Point(0,0), p_point);
         	if(l_new_radius > mMaxGeoRadius )
         		mMaxGeoRadius = l_new_radius;
-    	}    	
+    	}    		
     	
+    }
+    
+    public void FlushView()
+    {
     	TrackView.this.invalidate();
     }
     
@@ -143,6 +147,6 @@ public class TrackView extends View {
     {
     	mTrack.clear();
     	TrackView.this.invalidate();
-    }
+    }   
     
 }

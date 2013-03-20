@@ -5,6 +5,7 @@ import java.util.Calendar;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
@@ -29,25 +30,102 @@ public class MainActivity extends Activity {
 		WORK
 	};
 	
-	public enum DistanceUnitType {
-		METER,
-		KILOMETER,
-		FEET,
-		MILE
-	};
 	
-	public enum AreaUnitType {
-		SQ_METER,
-		HECTARE,
-		ACRE,
-		MU
-	};
+	
+	public static class DistanceUnit
+	{
+		public enum DistanceUnitType {
+			METER,
+			KILOMETER,
+			FEET,
+			MILE
+		};
+		
+		public static double getDistanceConversionRate(DistanceUnitType p_type)
+		{
+			switch(p_type)
+			{
+			case METER:
+				return 1.0;
+			case KILOMETER:
+				return 0.001;
+			case FEET:
+				return 3.2808399;
+			case MILE:
+				return 0.0006213712;
+			default:
+				return 1.0;			
+			}
+		}
+		
+		public static String getDistanceUnitText(Context cont, DistanceUnitType p_type)
+		{
+			switch(p_type)
+			{
+			case METER:
+				return cont.getString(R.string.txt_value_distance_unit);
+			case KILOMETER:
+				return cont.getString(R.string.txt_value_distance_km);
+			case FEET:
+				return cont.getString(R.string.txt_value_distance_feet);
+			case MILE:
+				return cont.getString(R.string.txt_value_distance_mile);
+			default:
+				return cont.getString(R.string.txt_value_distance_unit);	
+			}
+		}
+	}
+	
+	public static class AreaUnit
+	{
+		public enum AreaUnitType {
+			SQ_METER, 
+			HECTARE, 
+			ACRE, 
+			MU
+		};
+		
+		public static double getAreaConversionRate(AreaUnitType p_type)
+		{
+			switch(p_type)
+			{
+			case SQ_METER:
+				return 1.0;
+			case HECTARE:
+				return 0.0001;
+			case ACRE:
+				return 0.00024710538;
+			case MU:
+				return 0.0015;
+			default:
+				return 1.0;			
+			}
+		}
+		
+		public static String getAreaUnitText(Context cont, AreaUnitType p_type)
+		{
+			switch(p_type)
+			{
+			case SQ_METER:
+				return cont.getString(R.string.txt_value_area_unit);
+			case HECTARE:
+				return cont.getString(R.string.txt_value_area_hectare);
+			case ACRE:
+				return cont.getString(R.string.txt_value_area_acre);
+			case MU:
+				return cont.getString(R.string.txt_value_area_mu);
+			default:
+				return cont.getString(R.string.txt_value_area_unit);	
+			}
+		}
+	
+	}
 	
 	class SpinnerLengthUnitSelectedListener implements OnItemSelectedListener{  
         public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,  
                 long arg3) {  
         	int id = (int)arg3;
-        	m_distance_unit = DistanceUnitType.values()[id];
+        	m_distance_unit = DistanceUnit.DistanceUnitType.values()[id];
         	showMeasureData(m_total_distance, m_total_area);
         }  
   
@@ -61,7 +139,7 @@ public class MainActivity extends Activity {
         public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,  
                 long arg3) {  
         	int id = (int)arg3;
-        	m_area_unit = AreaUnitType.values()[id];
+        	m_area_unit = AreaUnit.AreaUnitType.values()[id];
         	showMeasureData(m_total_distance, m_total_area);
         }  
   
@@ -82,6 +160,8 @@ public class MainActivity extends Activity {
 	static final double s_min_limit_for_valid_movement = 3.0;
 	public static final String EXTRA_MEASUREMENT = "com.example.smartgpsmeasurer.MEASUREMENT";
 	public static final String EXTRA_UNIT = "com.example.smartgpsmeasurer.UNIT";
+	public static final String EXTRA_DBFILE = "com.example.smartgpsmeasurer.DBFILE";
+	
 
 	GeoPoint m_first_point;
 	GeoPoint m_latest_used_point;
@@ -93,9 +173,9 @@ public class MainActivity extends Activity {
 	boolean m_first_gps_status = true;
 	MeasureState m_measure_state;
 	double m_total_distance;
-	DistanceUnitType m_distance_unit = DistanceUnitType.METER;	
+	DistanceUnit.DistanceUnitType m_distance_unit = DistanceUnit.DistanceUnitType.METER;	
 	double m_total_area;
-	AreaUnitType m_area_unit = AreaUnitType.SQ_METER;
+	AreaUnit.AreaUnitType m_area_unit = AreaUnit.AreaUnitType.SQ_METER;
 
 	MyLocationListener m_my_loc_listener;
 	
@@ -338,10 +418,10 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(this, CalcActivity.class);
 		TextView tv = (TextView) findViewById(R.id.txt_id_area);
 		intent.putExtra(EXTRA_MEASUREMENT, tv.getText().toString());
-		intent.putExtra(EXTRA_UNIT, getAreaUnitText(m_area_unit));
+		intent.putExtra(EXTRA_UNIT, AreaUnit.getAreaUnitText(this, m_area_unit));
 		startActivity(intent);
 	}
-	
+	/*
 	public void onDistanceUnitTextClick(View p_view)
 	{
 		if(m_distance_unit == DistanceUnitType.METER)
@@ -373,7 +453,7 @@ public class MainActivity extends Activity {
 		
 		showMeasureData(m_total_distance, m_total_area);
 	}
-	
+	*/
 	private boolean preparePointArrayBeforeMeasure(GeoPoint p_geo_point)
 	{
 		boolean l_array_ready = false;
@@ -483,6 +563,7 @@ public class MainActivity extends Activity {
 			m_used_point_list.add(p_point);
 			
 			mTrackview.AddNewPoint(GeoPoint.convertGeo2Cart(p_point));
+			mTrackview.FlushView();
 		}		
 	}
 	
@@ -603,14 +684,14 @@ public class MainActivity extends Activity {
 	private void showMeasureData(double p_distance, double p_area)
 	{
 		TextView tv = (TextView) findViewById(R.id.txt_id_distance);		
-		tv.setText(String.format("%.2f", p_distance*getDistanceConversionRate(m_distance_unit)));
+		tv.setText(String.format("%.2f", p_distance*DistanceUnit.getDistanceConversionRate(m_distance_unit)));
 		//tv = (TextView)findViewById(R.id.txt_id_distance_unit);
 		//tv.setText(getDistanceUnitText(m_distance_unit));
 		
 		tv = (TextView) findViewById(R.id.txt_id_area);		
 		if(p_area < 0)
 			p_area *= -1;
-		tv.setText(String.format("%.2f", p_area*getAreaConversionRate(m_area_unit)));
+		tv.setText(String.format("%.2f", p_area*AreaUnit.getAreaConversionRate(m_area_unit)));
 		//tv = (TextView)findViewById(R.id.txt_id_area_unit);
 		//tv.setText(getAreaUnitText(m_area_unit));
 		
@@ -623,6 +704,7 @@ public class MainActivity extends Activity {
 			//visibleDebugLog(p_msg);
 		}
 	}
+	
 	/*
 	private void visibleDebugLog(String p_msg)
 	{
@@ -636,23 +718,8 @@ public class MainActivity extends Activity {
 	}
 	*/
 	
-	private double getDistanceConversionRate(DistanceUnitType p_type)
-	{
-		switch(p_type)
-		{
-		case METER:
-			return 1.0;
-		case KILOMETER:
-			return 0.001;
-		case FEET:
-			return 3.2808399;
-		case MILE:
-			return 0.0006213712;
-		default:
-			return 1.0;			
-		}
-	}
 	
+	/*
 	private String getDistanceUnitText(DistanceUnitType p_type)
 	{
 		switch(p_type)
@@ -670,22 +737,7 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	private double getAreaConversionRate(AreaUnitType p_type)
-	{
-		switch(p_type)
-		{
-		case SQ_METER:
-			return 1.0;
-		case HECTARE:
-			return 0.0001;
-		case ACRE:
-			return 0.00024710538;
-		case MU:
-			return 0.0015;
-		default:
-			return 1.0;			
-		}
-	}
+	
 	
 	private String getAreaUnitText(AreaUnitType p_type)
 	{
@@ -703,5 +755,6 @@ public class MainActivity extends Activity {
 			return this.getString(R.string.txt_value_area_unit);	
 		}
 	}
+	*/
 
 }

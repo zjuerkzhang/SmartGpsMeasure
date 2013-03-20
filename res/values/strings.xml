@@ -72,4 +72,6 @@
     <string name="btn_cal_pad_num_C">C</string>
     <string name="btn_cal_btn">Calculate</string>
     
+    <string name="menu_clear_history">Clear History</string>
+    
 </resources>

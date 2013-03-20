@@ -61,6 +61,8 @@ public class CalcActivity extends Activity {
 	{
 		myDebugLog(tag, "onCalculate");
 		
+		if( m_unit_price!="" )
+		{
 		TextView tv = (TextView)findViewById(R.id.txt_id_cal_area);
 		double area = Double.parseDouble(tv.getText().toString());
 		double unit_price = Double.parseDouble(m_unit_price);
@@ -68,6 +70,7 @@ public class CalcActivity extends Activity {
 		double total_price = area*unit_price;
 		tv = (TextView)findViewById(R.id.txt_id_cal_total_price);
 		tv.setText(String.format("%.2f", total_price));
+		}
 	}
             
 	

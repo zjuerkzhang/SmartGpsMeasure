@@ -29,5 +29,8 @@
         <activity android:name=".DBFileList"
                   android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".HistoryActivity"
+                  android:screenOrientation="portrait">
+        </activity>
     </application>
 </manifest>
