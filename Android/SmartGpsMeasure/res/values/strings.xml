@@ -77,4 +77,6 @@
     
     <string name="menu_clear_history">Clear History</string>
     
+    <string name="dblist_no_record">No History</string>
+    
 </resources>

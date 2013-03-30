@@ -8,6 +8,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -42,6 +43,23 @@ public class MainActivity extends Activity {
 			FEET,
 			MILE
 		};
+		
+		public static int enum2int(DistanceUnitType p_unit_type)
+		{
+			switch(p_unit_type)
+			{
+			case METER:
+				return 0;
+			case KILOMETER:
+				return 1;
+			case FEET:
+				return 2;
+			case MILE:
+				return 3;
+			default:
+				return 0;			
+			}
+		}
 		
 		public static double getDistanceConversionRate(DistanceUnitType p_type)
 		{
@@ -86,6 +104,23 @@ public class MainActivity extends Activity {
 			ACRE, 
 			MU
 		};
+		
+		public static int enum2int(AreaUnitType p_unit_type)
+		{
+			switch(p_unit_type)
+			{
+			case SQ_METER:
+				return 0;
+			case HECTARE:
+				return 1;
+			case ACRE:
+				return 2;
+			case MU:
+				return 3;
+			default:
+				return 0;			
+			}
+		}
 		
 		public static double getAreaConversionRate(AreaUnitType p_type)
 		{
@@ -165,6 +200,10 @@ public class MainActivity extends Activity {
 	public static final String EXTRA_DBFILE = "com.example.smartgpsmeasurer.DBFILE";
 	static final String validFilePath = "/sgm/a.txt";
 	
+	public static final String CONFIG_FILE = "configfile";
+	public static final String CONFIG_DIS_TYPE = "dis_unit";
+	public static final String CONFIG_AREA_TYPE = "area_unit";
+	
 
 	GeoPoint m_first_point;
 	GeoPoint m_latest_used_point;
@@ -198,17 +237,26 @@ public class MainActivity extends Activity {
 		btn_cal = (Button)findViewById(R.id.btn_cal_button);
 		mTrackview = (TrackView)findViewById(R.id.view_id_trackview);
 		
+		SharedPreferences settings = getSharedPreferences(CONFIG_FILE, 0);
+		int distance_unit_idx = settings.getInt(CONFIG_DIS_TYPE, 0);
+		m_distance_unit = DistanceUnit.DistanceUnitType.values()[distance_unit_idx];
+		
 		length_unit_spinner = (Spinner)findViewById(R.id.spinner_id_distance_unit);
 		length_unit_adapter = ArrayAdapter.createFromResource(this, R.array.length_units, android.R.layout.simple_spinner_item);  
 		length_unit_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);		
 		length_unit_spinner.setAdapter(length_unit_adapter);
+		length_unit_spinner.setSelection(distance_unit_idx);
 		length_unit_spinner.setOnItemSelectedListener(new SpinnerLengthUnitSelectedListener());		
 		length_unit_spinner.setVisibility(View.VISIBLE);
+		
+		int area_unit_idx = settings.getInt(CONFIG_AREA_TYPE, 0);
+		m_distance_unit = DistanceUnit.DistanceUnitType.values()[area_unit_idx];
 		
 		area_unit_spinner = (Spinner)findViewById(R.id.spinner_id_area_unit);
 		area_unit_adapter = ArrayAdapter.createFromResource(this, R.array.area_units, android.R.layout.simple_spinner_item);  
 		area_unit_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);		
 		area_unit_spinner.setAdapter(area_unit_adapter);
+		area_unit_spinner.setSelection(area_unit_idx);
 		area_unit_spinner.setOnItemSelectedListener(new SpinnerAreaUnitSelectedListener());		
 		area_unit_spinner.setVisibility(View.VISIBLE);
 		
@@ -232,6 +280,7 @@ public class MainActivity extends Activity {
 			startActivity(intent);
 			MainActivity.this.finish();
 		}
+		
 	}
 
 	@Override
@@ -258,6 +307,13 @@ public class MainActivity extends Activity {
 		{
 			m_my_loc_listener.deregisterLocationService();
 		}
+		
+		SharedPreferences settings = getSharedPreferences(CONFIG_FILE, 0);
+		SharedPreferences.Editor editor = settings.edit(); 
+		editor.putInt(CONFIG_DIS_TYPE, DistanceUnit.enum2int(m_distance_unit));
+		editor.putInt(CONFIG_AREA_TYPE, AreaUnit.enum2int(m_area_unit));
+		editor.commit();
+		
 		super.onStop();
 	}
     
@@ -432,39 +488,7 @@ public class MainActivity extends Activity {
 		intent.putExtra(EXTRA_UNIT, AreaUnit.getAreaUnitText(this, m_area_unit));
 		startActivity(intent);
 	}
-	/*
-	public void onDistanceUnitTextClick(View p_view)
-	{
-		if(m_distance_unit == DistanceUnitType.METER)
-			m_distance_unit = DistanceUnitType.KILOMETER;
-		else if(m_distance_unit == DistanceUnitType.KILOMETER)
-			m_distance_unit = DistanceUnitType.FEET;
-		else if(m_distance_unit == DistanceUnitType.FEET)
-			m_distance_unit = DistanceUnitType.MILE;
-		else if(m_distance_unit == DistanceUnitType.MILE)
-			m_distance_unit = DistanceUnitType.METER;
-		else
-		{}
-		
-		showMeasureData(m_total_distance, m_total_area);
-	}
-	
-	public void onAreaUnitTextClick(View p_view)
-	{
-		if(m_area_unit == AreaUnitType.SQ_METER)
-			m_area_unit = AreaUnitType.HECTARE;
-		else if(m_area_unit == AreaUnitType.HECTARE)
-			m_area_unit = AreaUnitType.ACRE;
-		else if(m_area_unit == AreaUnitType.ACRE)
-			m_area_unit = AreaUnitType.MU;
-		else if(m_area_unit == AreaUnitType.MU)
-			m_area_unit = AreaUnitType.SQ_METER;
-		else
-		{}
-		
-		showMeasureData(m_total_distance, m_total_area);
-	}
-	*/
+
 	private boolean preparePointArrayBeforeMeasure(GeoPoint p_geo_point)
 	{
 		boolean l_array_ready = false;
@@ -505,6 +529,8 @@ public class MainActivity extends Activity {
 				                     total_longitude/s_point_array_length,
 				                     false);
 		m_latest_used_point = m_first_point;
+		
+		m_used_point_list.add(m_first_point);
 	}
 	
 	private int getPreviousPointIndex(int p_current_idx)
@@ -638,59 +664,6 @@ public class MainActivity extends Activity {
 		tv = (TextView) findViewById(R.id.txt_id_longitude);
 		tv.setText(String.format("%.6f", p_current_location.getLongitude()));
 	}
-	/*
-	private void changeLocationStatusText(Location p_current_location,
-			                              Location p_last_location) {
-		Time time = new Time();
-		
-		TextView tv = (TextView) findViewById(R.id.txt_gps_data);
-		tv.setText("");
-		
-		StringBuilder sb = new StringBuilder();
-		
-		time.set(p_current_location.getTime());
-		sb.append(this.getString(R.string.txt_timestamp));
-		sb.append(time.format("%Y-%m-%d %H:%M:%S"));
-		sb.append("\n");
-		
-		sb.append(this.getString(R.string.txt_provider));
-		sb.append(p_current_location.getProvider());
-		sb.append("\n");
-		
-		sb.append(this.getString(R.string.txt_latitude));
-		sb.append(String.format("%.6f", p_current_location.getLatitude()));
-		sb.append("\n");
-		
-		sb.append(this.getString(R.string.txt_longitude));
-		sb.append(String.format("%.6f", p_current_location.getLongitude()));
-		sb.append("\n");
-		
-		sb.append(this.getString(R.string.txt_altitude));
-		sb.append(String.format("%.2f", p_current_location.getAltitude()));
-		sb.append("\n");
-		
-		sb.append(this.getString(R.string.txt_accuracy));
-		sb.append(String.format("%.2f", p_current_location.getAccuracy()));
-		sb.append("\n");
-		
-		sb.append(this.getString(R.string.txt_speed));
-		sb.append(String.format("%.2f", p_current_location.getSpeed()));
-		sb.append("\n");
-		
-		sb.append(this.getString(R.string.txt_delta_distance));
-		if(p_current_location==null || p_last_location==null)
-			sb.append(0);
-		else
-			sb.append(String.format("%.2f", 
-					                GeoPoint.getDistance(
-					                        new GeoPoint(p_last_location.getLatitude(), p_last_location.getLongitude()), 
-					                        new GeoPoint(p_current_location.getLatitude(), p_current_location.getLongitude())) ) );
-		sb.append("\n");
-		
-		tv.setText(sb.toString());			
-		
-	}
-	*/
 	
 	private void showMeasureData(double p_distance, double p_area)
 	{
@@ -736,7 +709,6 @@ public class MainActivity extends Activity {
 		            */
 		  
 		        } catch (Exception e) {  
-		            // TODO: handle exception  
 		        }// end of try
 		        
 		        l_valid = true;
@@ -746,7 +718,7 @@ public class MainActivity extends Activity {
 		return l_valid;
 	}
 	
-	private void myDebugLog(String p_tag, String p_msg) {
+	static public void myDebugLog(String p_tag, String p_msg) {
 		if (s_log_switch)
 		{
 			Log.d(p_tag, p_msg);
@@ -754,56 +726,5 @@ public class MainActivity extends Activity {
 		}
 	}
 	
-	/*
-	private void visibleDebugLog(String p_msg)
-	{
-		TextView tv = (TextView)findViewById(R.id.txt_log);
-		
-		StringBuilder sb = new StringBuilder();
-		sb.append(tv.getText());
-		sb.append("\n");
-		sb.append(p_msg);		
-		tv.setText(sb.toString());
-	}
-	*/
-	
-	
-	/*
-	private String getDistanceUnitText(DistanceUnitType p_type)
-	{
-		switch(p_type)
-		{
-		case METER:
-			return this.getString(R.string.txt_value_distance_unit);
-		case KILOMETER:
-			return this.getString(R.string.txt_value_distance_km);
-		case FEET:
-			return this.getString(R.string.txt_value_distance_feet);
-		case MILE:
-			return this.getString(R.string.txt_value_distance_mile);
-		default:
-			return this.getString(R.string.txt_value_distance_unit);	
-		}
-	}
-	
-	
-	
-	private String getAreaUnitText(AreaUnitType p_type)
-	{
-		switch(p_type)
-		{
-		case SQ_METER:
-			return this.getString(R.string.txt_value_area_unit);
-		case HECTARE:
-			return this.getString(R.string.txt_value_area_hectare);
-		case ACRE:
-			return this.getString(R.string.txt_value_area_acre);
-		case MU:
-			return this.getString(R.string.txt_value_area_mu);
-		default:
-			return this.getString(R.string.txt_value_area_unit);	
-		}
-	}
-	*/
 
 }
