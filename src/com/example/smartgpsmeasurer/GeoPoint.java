@@ -73,14 +73,13 @@ public class GeoPoint {
 		//double e2 = 0.0066943799013;
 		double S, N, t, t2, m, m2, ng2;
 	    double sinB, cosB;
-	    double e2, e12;
+	    double e2;
 	    double A0, B0, C0, D0, E0;
 	    double L_rad, B_rad, L0;
 	    double n0;
 	    double x, y;
 	    
 	    e2 = (r_a*r_a - r_b*r_b)/(r_a*r_a);
-	    e12 = (r_a*r_a - r_b*r_b)/(r_b*r_b);
 	    n0 = (r_a - r_b)/(r_a + r_b);
 	    
 	    L_rad = p_gp.getLongitude() * Math.PI /180.0;

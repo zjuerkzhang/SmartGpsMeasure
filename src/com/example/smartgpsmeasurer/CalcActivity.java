@@ -3,7 +3,6 @@ package com.example.smartgpsmeasurer;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -11,13 +10,14 @@ import android.widget.TextView;
 public class CalcActivity extends Activity {
 	
 	static final String tag = "CalcActivity";
-	static final boolean s_log_switch = true;
 	
 	private String m_unit_price ="";
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        MainActivity.myDebugLog(tag, "onCreate");
         
         Intent intent = getIntent();
         String measurement = intent.getStringExtra(MainActivity.EXTRA_MEASUREMENT);
@@ -35,7 +35,7 @@ public class CalcActivity extends Activity {
 	
 	public void onNumPadClick(View p_view)
 	{
-		myDebugLog(tag, "onNumPadClick: button '" + ((Button)p_view).getText().toString() + "' is clicked");
+		//MainActivity.myDebugLog(tag, "onNumPadClick: button '" + ((Button)p_view).getText().toString() + "' is clicked");
 		
 		if(((Button)p_view).getText() == this.getString(R.string.btn_cal_pad_num_C))		
 			m_unit_price = "";
@@ -59,7 +59,7 @@ public class CalcActivity extends Activity {
 	
 	public void onCalculate(View p_view)
 	{
-		myDebugLog(tag, "onCalculate");
+		MainActivity.myDebugLog(tag, "onCalculate");
 		
 		if( m_unit_price!="" )
 		{
@@ -70,14 +70,6 @@ public class CalcActivity extends Activity {
 		double total_price = area*unit_price;
 		tv = (TextView)findViewById(R.id.txt_id_cal_total_price);
 		tv.setText(String.format("%.2f", total_price));
-		}
-	}
-            
-	
-	private void myDebugLog(String p_tag, String p_msg) {
-		if (s_log_switch)
-		{
-			Log.d(p_tag, p_msg);
 		}
 	}
 

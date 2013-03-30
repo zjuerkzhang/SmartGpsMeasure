@@ -10,12 +10,11 @@ import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.TextView;
 
 public class MyLocationListener implements LocationListener {
 	
 	static final String tag = "MyLocationListener";
-	static final boolean s_log_switch = true;
+	static final boolean s_log_switch = false;
 
 	private LocationManager m_lm;
 	private MainActivity m_parent;

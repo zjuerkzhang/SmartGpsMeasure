@@ -4,8 +4,8 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -19,6 +19,8 @@ import com.example.smartgpsmeasurer.MainActivity.DistanceUnit;
 import com.example.smartgpsmeasurer.MainActivity.DistanceUnit.DistanceUnitType;
 
 public class HistoryActivity extends Activity{
+	
+	static final String tag = "HistoryActivity";
 	
 	class SpinnerLengthUnitSelectedListener implements OnItemSelectedListener{  
         public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,  
@@ -64,8 +66,9 @@ public class HistoryActivity extends Activity{
         super.onCreate(savedInstanceState);
         
         Intent intent = getIntent();
-        String db_filename = intent.getStringExtra(MainActivity.EXTRA_DBFILE);        
-        Log.v("HistoryActivity", db_filename);
+        String db_filename = intent.getStringExtra(MainActivity.EXTRA_DBFILE);  
+        MainActivity.myDebugLog(tag, "onCreate");
+        MainActivity.myDebugLog(tag, db_filename);
         
         setContentView(R.layout.activity_history);        
         
@@ -83,17 +86,26 @@ public class HistoryActivity extends Activity{
         
         calculateDistanceAndArea();        
         
+		SharedPreferences settings = getSharedPreferences(MainActivity.CONFIG_FILE, 0);
+		int distance_unit_idx = settings.getInt(MainActivity.CONFIG_DIS_TYPE, 0);
+		m_distance_unit = DistanceUnit.DistanceUnitType.values()[distance_unit_idx];
+        
         length_unit_spinner = (Spinner)findViewById(R.id.spinner_id_his_distance_unit);
 		length_unit_adapter = ArrayAdapter.createFromResource(this, R.array.length_units, android.R.layout.simple_spinner_item);  
 		length_unit_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);		
 		length_unit_spinner.setAdapter(length_unit_adapter);
+		length_unit_spinner.setSelection(distance_unit_idx);
 		length_unit_spinner.setOnItemSelectedListener(new SpinnerLengthUnitSelectedListener());		
 		length_unit_spinner.setVisibility(View.VISIBLE);
+		
+		int area_unit_idx = settings.getInt(MainActivity.CONFIG_AREA_TYPE, 0);
+		m_distance_unit = DistanceUnit.DistanceUnitType.values()[area_unit_idx];
 		
 		area_unit_spinner = (Spinner)findViewById(R.id.spinner_id_his_area_unit);
 		area_unit_adapter = ArrayAdapter.createFromResource(this, R.array.area_units, android.R.layout.simple_spinner_item);  
 		area_unit_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);		
 		area_unit_spinner.setAdapter(area_unit_adapter);
+		area_unit_spinner.setSelection(area_unit_idx);
 		area_unit_spinner.setOnItemSelectedListener(new SpinnerAreaUnitSelectedListener());		
 		area_unit_spinner.setVisibility(View.VISIBLE);
 		
@@ -101,8 +113,11 @@ public class HistoryActivity extends Activity{
     
     @Override
 	public void onStop() {
+    	MainActivity.myDebugLog(tag, "onStop");
+    	
     	m_track_view.ClearAllPoint();
-		super.onStop();
+    	
+    	super.onStop();
 	}
     
     private void calculateDistanceAndArea()

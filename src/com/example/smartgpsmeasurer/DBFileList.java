@@ -8,9 +8,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -18,29 +15,45 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.smartgpsmeasurer.R.color;
-
 public class DBFileList extends Activity {
 	 
     private ListView listView;
+    private TextView textView;
+    static final String tag = "DBFileList";
     
     //private List<String> data = new ArrayList<String>();
     @Override
     public void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
-         
-        listView = new ListView(this);
-        listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,getData()));
-        setContentView(listView);
-        listView.setOnItemClickListener(new OnItemClickListener() {          	  
-            @Override  
-            public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {  
-                // TODO Auto-generated method stub  
-            	String db_filename = convertTime2Dbname(((TextView)arg1).getText().toString());
-                Log.v("DBFileList", convertTime2Dbname(((TextView)arg1).getText().toString()));
-                startHistoryActivity(db_filename);
-            }  
-            });
+        
+        MainActivity.myDebugLog(tag, "onCreate");
+        List<String> lv_str = getData();
+        if(lv_str.size() == 0)
+        {
+        	textView = new TextView(this);
+        	textView.setText(this.getString(R.string.dblist_no_record));
+        	textView.setTextSize(18);
+        	setContentView(textView);
+        }
+        else
+        {
+			listView = new ListView(this);
+
+			listView.setAdapter(new ArrayAdapter<String>(this,
+					android.R.layout.simple_expandable_list_item_1, getData()));			
+			listView.setOnItemClickListener(new OnItemClickListener() {
+				@Override
+				public void onItemClick(AdapterView<?> arg0, View arg1,
+						int arg2, long arg3) {
+					String db_filename = convertTime2Dbname(((TextView) arg1)
+							.getText().toString());
+					MainActivity.myDebugLog(tag, convertTime2Dbname(((TextView) arg1)
+							.getText().toString()));
+					startHistoryActivity(db_filename);
+				}
+			});
+			setContentView(listView);
+        }
     }
     /*
 	@Override
@@ -80,13 +93,17 @@ public class DBFileList extends Activity {
      */
     private void startHistoryActivity(String db_filename)
     {
+    	MainActivity.myDebugLog(tag, "startHistoryActivity");
+    	
     	Intent intent = new Intent(this, HistoryActivity.class);
 		intent.putExtra(MainActivity.EXTRA_DBFILE, db_filename);
 		startActivity(intent);
     }
      
-    private List<String> getData(){
-         
+    private List<String> getData()
+    {    
+    	MainActivity.myDebugLog(tag, "getData");
+    	
         List<String> data = new ArrayList<String>();
         Context cont = this.getApplicationContext();
         File db_dir = cont.getDatabasePath("temp");
@@ -111,6 +128,8 @@ public class DBFileList extends Activity {
     
     private String convertDbName2Time(String str)
     {  
+    	MainActivity.myDebugLog(tag, "convertDbName2Time");
+    	
     	String date = str.substring(0, str.indexOf("--"));
     	String time = str.substring(str.indexOf("--")+"--".length(), str.length());
     	return (date + " " + time.replace("-", ":").replace(".db", ""));
@@ -118,6 +137,8 @@ public class DBFileList extends Activity {
     
     private String convertTime2Dbname(String str)
     {
+    	MainActivity.myDebugLog(tag, "convertTime2Dbname");
+    	
     	return (str.replace(" ", "--").replace(":", "-") + ".db");
     }
 

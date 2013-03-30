@@ -83,6 +83,14 @@ public class TrackView extends View {
         		        mPaint);
         	}
         	i--;
+        	/* draw the last line */
+        	mPaint.setColor(Color.GRAY);
+    		canvas.drawLine((int)Math.floor(mTrack.get(0).getX()*l_factor + mCenterPoint.getX()), 
+    		        (int)Math.floor(mTrack.get(0).getY()*l_factor + mCenterPoint.getY()), 
+    		        (int)Math.floor(mTrack.get(i).getX()*l_factor + mCenterPoint.getX()), 
+    		        (int)Math.floor(mTrack.get(i).getY()*l_factor + mCenterPoint.getY()), 
+    		        mPaint);        	
+        	
         	mPaint.setColor(Color.YELLOW);
         	mPaint.setStyle(Paint.Style.STROKE);
             canvas.drawCircle((float)(mTrack.get(i).getX()*l_factor + mCenterPoint.getX()), 
