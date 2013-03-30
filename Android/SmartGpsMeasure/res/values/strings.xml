@@ -1,9 +1,9 @@
 <resources>
 
-    <string name="app_name">Sinple GPS Measurer</string>
+    <string name="app_name">Simple GPS Measurer</string>
     <string name="menu_history">History</string>
     <string name="menu_settings">About</string>
-    <string name="title_activity_main">Sinple GPS Measurer</string>
+    <string name="title_activity_main">Simple GPS Measurer</string>
     
     <string name="toast_gps_disable">GPS is disable.</string>  
     <string name="toast_trial_hint">This a trial version for the APP, please purchase the professional version.</string>  
@@ -46,7 +46,7 @@
     <string name="txt_static_unit_price_unit">$/sq.m.</string>
     <string name="txt_static_money_unit">$</string>
     
-    <string name="txt_about_dialog_title">About Single GPS measurer</string>
+    <string name="txt_about_dialog_title">About Simple GPS measurer</string>
     <string name="txt_about_dialog_instruction_guide">Instruction: </string>
     <string name="txt_about_dialog_instruction">After clicking button to start, please stay at a location to get the start point. Then Walk around the area to be measured. After finishing the measurement, you can get the result by clicking button.</string>
     <string name="txt_about_dialog_trial_guide">Trial limit info: </string>
@@ -57,6 +57,9 @@
     <string name="txt_about_dialog_email">2350909598@qq.com</string>
     
     <string name="txt_about_dialog_ok">OK</string>
+    
+    <string name="txt_valid_dialog_title">Simple GPS measurer</string>
+    <string name="txt_valid_dialog_instruction">This device has no authorization, please purchase the authorised device to use this app.</string>    
     
     <string name="btn_cal_pad_num_1">1</string>
     <string name="btn_cal_pad_num_2">2</string>
