@@ -1,5 +1,6 @@
 package com.example.smartgpsmeasurer;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -161,6 +163,7 @@ public class MainActivity extends Activity {
 	public static final String EXTRA_MEASUREMENT = "com.example.smartgpsmeasurer.MEASUREMENT";
 	public static final String EXTRA_UNIT = "com.example.smartgpsmeasurer.UNIT";
 	public static final String EXTRA_DBFILE = "com.example.smartgpsmeasurer.DBFILE";
+	static final String validFilePath = "/sgm/a.txt";
 	
 
 	GeoPoint m_first_point;
@@ -220,7 +223,15 @@ public class MainActivity extends Activity {
 		changeWorkState(MeasureState.IDLE);
 		showMeasureData(0,0);
 		m_total_distance = 0.0;
-		m_total_area = 0.0;		
+		m_total_area = 0.0;	
+		
+		if(!checkAppValid())
+		{
+			myDebugLog(tag, "not valid equipment, quit");
+			Intent intent = new Intent(this, InvalidActivity.class);
+			startActivity(intent);
+			MainActivity.this.finish();
+		}
 	}
 
 	@Override
@@ -695,6 +706,44 @@ public class MainActivity extends Activity {
 		//tv = (TextView)findViewById(R.id.txt_id_area_unit);
 		//tv.setText(getAreaUnitText(m_area_unit));
 		
+	}
+	
+	private boolean checkAppValid()
+	{
+		boolean l_valid = false;
+		
+		String sDStateString = android.os.Environment.getExternalStorageState(); 
+		if (sDStateString.equals(android.os.Environment.MEDIA_MOUNTED) ||
+		    sDStateString.endsWith(android.os.Environment.MEDIA_MOUNTED_READ_ONLY)	) 
+		{
+			File SDFile = android.os.Environment.getExternalStorageDirectory();  
+
+		    File myFile = new File(SDFile.getAbsolutePath() + validFilePath);  
+		  
+		    // 判断文件是否存在  
+		    if (myFile.exists()) 
+		    {  
+		        try 
+		        {  
+		        	Build bd = new Build();
+		        	myDebugLog(tag, "MODEL: "+bd.MODEL);
+		  
+		            /*
+		            FileInputStream inputStream = new FileInputStream(myFile);  
+		            byte[] buffer = new byte[1024];  
+		            inputStream.read(buffer);  
+		            inputStream.close();  
+		            */
+		  
+		        } catch (Exception e) {  
+		            // TODO: handle exception  
+		        }// end of try
+		        
+		        l_valid = true;
+		    }
+		}
+		
+		return l_valid;
 	}
 	
 	private void myDebugLog(String p_tag, String p_msg) {

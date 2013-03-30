@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bk_color"
+    android:orientation="vertical" >
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@color/bk_color"
+        android:paddingLeft="10dp"
+        android:orientation="vertical" >
+        <TextView 
+            android:layout_width="match_parent"    
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:paddingTop="30sp"
+            android:paddingBottom="20sp"
+            android:background="@color/bk_color"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:text="@string/txt_valid_dialog_instruction"
+            tools:context=".MainActivity" />
+        <Button
+            android:id="@+id/btn_valid_ok_btn"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/txt_about_dialog_ok"
+            android:onClick="onClickValid"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+</LinearLayout>

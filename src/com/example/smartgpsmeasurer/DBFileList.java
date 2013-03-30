@@ -31,7 +31,6 @@ public class DBFileList extends Activity {
          
         listView = new ListView(this);
         listView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,getData()));
-        listView.setBackgroundColor(color.bk_color);
         setContentView(listView);
         listView.setOnItemClickListener(new OnItemClickListener() {          	  
             @Override  
@@ -92,7 +91,9 @@ public class DBFileList extends Activity {
         Context cont = this.getApplicationContext();
         File db_dir = cont.getDatabasePath("temp");
         db_dir = db_dir.getParentFile();
-        File db_files[] = db_dir.listFiles();      
+        File db_files[] = db_dir.listFiles(); 
+        if(db_files == null)
+        	return data;
         for(int i=db_files.length-1; i>=0; i--)
         {
         	if(db_files[i].getName().indexOf(".db")>0)
