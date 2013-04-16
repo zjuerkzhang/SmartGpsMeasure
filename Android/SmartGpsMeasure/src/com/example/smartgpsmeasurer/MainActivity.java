@@ -9,6 +9,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Build;
@@ -204,6 +205,7 @@ public class MainActivity extends Activity {
 	public static final String CONFIG_DIS_TYPE = "dis_unit";
 	public static final String CONFIG_AREA_TYPE = "area_unit";
 	
+	static final String gps_status_app_pac_name = "com.eclipsim.gpsstatus2";
 
 	GeoPoint m_first_point;
 	GeoPoint m_latest_used_point;
@@ -438,7 +440,7 @@ public class MainActivity extends Activity {
 	}
 		
 	public void onButtonClick(View p_view)
-	{
+	{		
 		myDebugLog(tag, "onButtonClick");
 		if(m_measure_state == MeasureState.IDLE)
 		{
@@ -476,6 +478,19 @@ public class MainActivity extends Activity {
 			btn_start.setText(this.getString(R.string.btn_value_start));
 			btn_start.setTextColor(getResources().getColor(R.color.bk_color));			
 		}
+		
+	}
+	
+	public void onGpsStatusClick(View p_view)
+	{
+		myDebugLog(tag, "onGpsStatusClick");
+		PackageManager packageManager = this.getPackageManager(); 
+		Intent intent=new Intent(); 
+		intent =packageManager.getLaunchIntentForPackage(gps_status_app_pac_name);
+		if(intent != null)
+			startActivity(intent); 
+		else
+			Log.i(tag, "gps status app not installed");
 	}
 	
 	public void onCalButtonClick(View p_view)
