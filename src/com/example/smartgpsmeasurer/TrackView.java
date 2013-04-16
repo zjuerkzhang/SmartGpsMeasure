@@ -154,6 +154,7 @@ public class TrackView extends View {
     public void ClearAllPoint()
     {
     	mTrack.clear();
+    	mMaxGeoRadius = 1.0;
     	TrackView.this.invalidate();
     }   
     
