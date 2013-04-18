@@ -7,6 +7,7 @@
     
     <string name="toast_gps_disable">GPS is disable.</string>  
     <string name="toast_trial_hint">This a trial version for the APP, please purchase the professional version.</string>  
+    <string name="gps_status_app_not_installed">The APP GPS Status is not installed.</string>
    
     <string name="btn_value_start">START</string>
     <string name="btn_value_stop">STOP</string>
