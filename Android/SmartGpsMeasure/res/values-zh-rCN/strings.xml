@@ -7,6 +7,7 @@
     
     <string name="toast_gps_disable">GPS未启用，请启用GPS.</string>  
     <string name="toast_trial_hint">本应用为试用版，如需使用完全功能，请购买专业版.</string>  
+    <string name="gps_status_app_not_installed">应用GPS状态未安装</string>
    
     <string name="btn_value_start">开始测量</string>
     <string name="btn_value_stop">停止测量</string>

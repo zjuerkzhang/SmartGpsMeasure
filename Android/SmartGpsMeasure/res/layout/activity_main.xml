@@ -40,6 +40,7 @@
         android:background="@color/bk_color"
         android:paddingLeft="2dp"
         android:orientation="horizontal" >
+        <!-- 
         <TextView            
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,6 +51,14 @@
             android:clickable="true"
             android:onClick="onGpsStatusClick"
             tools:context=".MainActivity" />
+             -->
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_static_sat_status_guide"
+            android:textColor="@color/bk_color"
+            android:textSize="15sp"
+            android:onClick="onGpsStatusClick" />        
         <TextView
             android:id="@+id/txt_id_sat_status"
             android:layout_weight="1"

@@ -1,6 +1,7 @@
 package com.example.smartgpsmeasurer;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -12,6 +13,8 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -199,13 +202,14 @@ public class MainActivity extends Activity {
 	public static final String EXTRA_MEASUREMENT = "com.example.smartgpsmeasurer.MEASUREMENT";
 	public static final String EXTRA_UNIT = "com.example.smartgpsmeasurer.UNIT";
 	public static final String EXTRA_DBFILE = "com.example.smartgpsmeasurer.DBFILE";
-	static final String validFilePath = "/sgm/a.txt";
+	static final String validFilePath = "/sgm/oicq.bin";
 	
 	public static final String CONFIG_FILE = "configfile";
 	public static final String CONFIG_DIS_TYPE = "dis_unit";
 	public static final String CONFIG_AREA_TYPE = "area_unit";
 	
 	static final String gps_status_app_pac_name = "com.eclipsim.gpsstatus2";
+	static final int    magic_num = 89;
 
 	GeoPoint m_first_point;
 	GeoPoint m_latest_used_point;
@@ -490,7 +494,7 @@ public class MainActivity extends Activity {
 		if(intent != null)
 			startActivity(intent); 
 		else
-			Log.i(tag, "gps status app not installed");
+			Toast.makeText(this, R.string.gps_status_app_not_installed, Toast.LENGTH_SHORT).show();
 	}
 	
 	public void onCalButtonClick(View p_view)
@@ -713,15 +717,32 @@ public class MainActivity extends Activity {
 		    {  
 		        try 
 		        {  
-		        	Build bd = new Build();
-		        	myDebugLog(tag, "MODEL: "+bd.MODEL);
-		  
-		            /*
+		        	String dev_modle;
+		        	String dev_mac_addr = "";
+		        	Build bd = new Build();		        
+		        	dev_modle = bd.MODEL;		        	
+		        	
+		        	WifiManager wifiMgr = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+		        	WifiInfo info = (null == wifiMgr ? null : wifiMgr.getConnectionInfo());
+		        	if (null != info) {
+		        		dev_mac_addr = info.getMacAddress();		        		
+		        	}
+		        	myDebugLog(tag, "MODEL&MAC: "+dev_modle+"-"+dev_mac_addr);
+		        	
+		        	byte[] dev_buff = getChecksumByDevInfo(dev_modle, dev_mac_addr);
+		        	
+		            
 		            FileInputStream inputStream = new FileInputStream(myFile);  
-		            byte[] buffer = new byte[1024];  
+		            byte[] buffer = new byte[32];  
 		            inputStream.read(buffer);  
 		            inputStream.close();  
-		            */
+		            
+		            for(int i=0; i<32; i++)
+		            {
+		            	if(dev_buff[i]!=buffer[i])
+		            		return false;
+		            }
+		            
 		  
 		        } catch (Exception e) {  
 		        }// end of try
@@ -731,6 +752,30 @@ public class MainActivity extends Activity {
 		}
 		
 		return l_valid;
+	}
+	
+	private byte[] getChecksumByDevInfo(String dev_mod, String dev_mac)
+	{
+		byte[] ret = new byte[32];		
+		byte[] mod = dev_mod.getBytes();
+		
+		for(int i=0; i<ret.length; i++)
+			ret[i] = 0;
+		
+		for(int i=0; i<mod.length; i++)
+			ret[i] = mod[i];
+		
+		String mac_sub_str[] = dev_mac.split(":");
+		
+		for(int i=0; i<mac_sub_str.length; i++)
+		{
+			int c = Integer.valueOf(mac_sub_str[i], 16);
+			c = c*magic_num;
+			ret[mod.length + 2*i] = (byte)(c/256);
+			ret[mod.length + 2*i +1] = (byte)(c%256);
+		}
+		
+		return ret;
 	}
 	
 	static public void myDebugLog(String p_tag, String p_msg) {
