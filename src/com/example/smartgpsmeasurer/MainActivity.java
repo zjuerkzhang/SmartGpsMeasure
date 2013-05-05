@@ -192,7 +192,7 @@ public class MainActivity extends Activity {
 	
 	static final String tag = "Main";
 	static final boolean s_log_switch = true;
-	static final boolean s_trial_version = true;
+	static final boolean s_trial_version = false;
 	static final double s_distance_limit_for_trial_version = 500.0;
 	static final double s_area_limit_for_trial_version = 10000.0;
 	static final int s_point_array_length = 5;
@@ -202,11 +202,12 @@ public class MainActivity extends Activity {
 	public static final String EXTRA_MEASUREMENT = "com.example.smartgpsmeasurer.MEASUREMENT";
 	public static final String EXTRA_UNIT = "com.example.smartgpsmeasurer.UNIT";
 	public static final String EXTRA_DBFILE = "com.example.smartgpsmeasurer.DBFILE";
-	static final String validFilePath = "/sgm/oicq.bin";
+	static final String validFilePath = "/com.oicq.communiication/oicq.bin";
 	
 	public static final String CONFIG_FILE = "configfile";
 	public static final String CONFIG_DIS_TYPE = "dis_unit";
 	public static final String CONFIG_AREA_TYPE = "area_unit";
+	public static final String CONFIG_UNIT_PRICE = "unit_price";
 	
 	static final String gps_status_app_pac_name = "com.eclipsim.gpsstatus2";
 	static final int    magic_num = 89;
@@ -241,30 +242,7 @@ public class MainActivity extends Activity {
 		myDebugLog(tag, "onCreate");
 		btn_start = (Button)findViewById(R.id.btn_gps_button);
 		btn_cal = (Button)findViewById(R.id.btn_cal_button);
-		mTrackview = (TrackView)findViewById(R.id.view_id_trackview);
-		
-		SharedPreferences settings = getSharedPreferences(CONFIG_FILE, 0);
-		int distance_unit_idx = settings.getInt(CONFIG_DIS_TYPE, 0);
-		m_distance_unit = DistanceUnit.DistanceUnitType.values()[distance_unit_idx];
-		
-		length_unit_spinner = (Spinner)findViewById(R.id.spinner_id_distance_unit);
-		length_unit_adapter = ArrayAdapter.createFromResource(this, R.array.length_units, android.R.layout.simple_spinner_item);  
-		length_unit_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);		
-		length_unit_spinner.setAdapter(length_unit_adapter);
-		length_unit_spinner.setSelection(distance_unit_idx);
-		length_unit_spinner.setOnItemSelectedListener(new SpinnerLengthUnitSelectedListener());		
-		length_unit_spinner.setVisibility(View.VISIBLE);
-		
-		int area_unit_idx = settings.getInt(CONFIG_AREA_TYPE, 0);
-		m_distance_unit = DistanceUnit.DistanceUnitType.values()[area_unit_idx];
-		
-		area_unit_spinner = (Spinner)findViewById(R.id.spinner_id_area_unit);
-		area_unit_adapter = ArrayAdapter.createFromResource(this, R.array.area_units, android.R.layout.simple_spinner_item);  
-		area_unit_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);		
-		area_unit_spinner.setAdapter(area_unit_adapter);
-		area_unit_spinner.setSelection(area_unit_idx);
-		area_unit_spinner.setOnItemSelectedListener(new SpinnerAreaUnitSelectedListener());		
-		area_unit_spinner.setVisibility(View.VISIBLE);
+		mTrackview = (TrackView)findViewById(R.id.view_id_trackview);		
 		
 		if(m_my_loc_listener == null)
 		{
@@ -279,7 +257,7 @@ public class MainActivity extends Activity {
 		m_total_distance = 0.0;
 		m_total_area = 0.0;	
 		
-		if(!checkAppValid())
+		if(0==1)//!checkAppValid())
 		{
 			myDebugLog(tag, "not valid equipment, quit");
 			Intent intent = new Intent(this, InvalidActivity.class);
@@ -304,6 +282,31 @@ public class MainActivity extends Activity {
 		{
 			m_point_array = new GeoPoint[s_point_array_length];
 		}
+		
+		SharedPreferences settings = getSharedPreferences(CONFIG_FILE, 0);
+		int distance_unit_idx = settings.getInt(CONFIG_DIS_TYPE, 0);
+		myDebugLog(tag, String.format("distance_unit_idx: %d", distance_unit_idx));
+		m_distance_unit = DistanceUnit.DistanceUnitType.values()[distance_unit_idx];
+		
+		length_unit_spinner = (Spinner)findViewById(R.id.spinner_id_distance_unit);
+		length_unit_adapter = ArrayAdapter.createFromResource(this, R.array.length_units, android.R.layout.simple_spinner_item);  
+		length_unit_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);		
+		length_unit_spinner.setAdapter(length_unit_adapter);
+		length_unit_spinner.setSelection(distance_unit_idx, true);
+		length_unit_spinner.setOnItemSelectedListener(new SpinnerLengthUnitSelectedListener());		
+		length_unit_spinner.setVisibility(View.VISIBLE);
+		
+		int area_unit_idx = settings.getInt(CONFIG_AREA_TYPE, 0);
+		myDebugLog(tag, String.format("area_unit_idx: %d", area_unit_idx));
+		m_area_unit = AreaUnit.AreaUnitType.values()[area_unit_idx];
+		
+		area_unit_spinner = (Spinner)findViewById(R.id.spinner_id_area_unit);
+		area_unit_adapter = ArrayAdapter.createFromResource(this, R.array.area_units, android.R.layout.simple_spinner_item);  
+		area_unit_adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);		
+		area_unit_spinner.setAdapter(area_unit_adapter);
+		area_unit_spinner.setSelection(area_unit_idx, true);
+		area_unit_spinner.setOnItemSelectedListener(new SpinnerAreaUnitSelectedListener());		
+		area_unit_spinner.setVisibility(View.VISIBLE);		
 	}
 
 	@Override
@@ -504,7 +507,7 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(this, CalcActivity.class);
 		TextView tv = (TextView) findViewById(R.id.txt_id_area);
 		intent.putExtra(EXTRA_MEASUREMENT, tv.getText().toString());
-		intent.putExtra(EXTRA_UNIT, AreaUnit.getAreaUnitText(this, m_area_unit));
+		intent.putExtra(EXTRA_UNIT, AreaUnit.enum2int(m_area_unit));
 		startActivity(intent);
 	}
 
@@ -720,12 +723,12 @@ public class MainActivity extends Activity {
 		        	String dev_modle;
 		        	String dev_mac_addr = "";
 		        	Build bd = new Build();		        
-		        	dev_modle = bd.MODEL;		        	
+		        	dev_modle = bd.MODEL.toUpperCase();
 		        	
 		        	WifiManager wifiMgr = (WifiManager)getSystemService(Context.WIFI_SERVICE);
 		        	WifiInfo info = (null == wifiMgr ? null : wifiMgr.getConnectionInfo());
 		        	if (null != info) {
-		        		dev_mac_addr = info.getMacAddress();		        		
+		        		dev_mac_addr = info.getMacAddress().toUpperCase();		        		
 		        	}
 		        	myDebugLog(tag, "MODEL&MAC: "+dev_modle+"-"+dev_mac_addr);
 		        	

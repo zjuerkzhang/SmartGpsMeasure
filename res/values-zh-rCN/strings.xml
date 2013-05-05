@@ -42,6 +42,7 @@
     <string name="txt_value_area_mu">亩</string>
     
     <string name="btn_static_calculate">计算总价</string>
+    <string name="btn_static_re_calculate">重新计算</string>
     <string name="txt_static_unit_price_guide">单价: </string>
     <string name="txt_static_total_price_guide">总价: </string>
     <string name="txt_static_unit_price_unit">元/平方米</string>

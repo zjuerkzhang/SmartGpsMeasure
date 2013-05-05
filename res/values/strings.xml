@@ -42,6 +42,7 @@
     <string name="txt_value_area_mu">Mu</string>   
     
     <string name="btn_static_calculate">Calculate</string>
+    <string name="btn_static_re_calculate">Calculate</string>
     <string name="txt_static_unit_price_guide">Unit Price: </string>
     <string name="txt_static_total_price_guide">Total Price: </string>
     <string name="txt_static_unit_price_unit">$/sq.m.</string>
