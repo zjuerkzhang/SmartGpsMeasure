@@ -191,7 +191,8 @@ public class MainActivity extends Activity {
     }  
 	
 	static final String tag = "Main";
-	static final boolean s_log_switch = true;
+	static final boolean s_biz_version = true;
+	static final boolean s_log_switch = false;
 	static final boolean s_trial_version = false;
 	static final double s_distance_limit_for_trial_version = 500.0;
 	static final double s_area_limit_for_trial_version = 10000.0;
@@ -359,12 +360,19 @@ public class MainActivity extends Activity {
 				sb.append("\n");	
 				sb.append("\n");
 			}
-			sb.append(this.getString(R.string.txt_about_dialog_author_guide));
-			sb.append(this.getString(R.string.txt_about_dialog_author));
-			sb.append("\n");
-			sb.append(this.getString(R.string.txt_about_dialog_email_guide));
-			sb.append(this.getString(R.string.txt_about_dialog_email));
-			
+			if(s_biz_version)
+			{
+				sb.append(this.getString(R.string.txt_about_dialog_version_res_guide));
+				sb.append(this.getString(R.string.txt_about_dialog_version_res));
+			}
+			else
+			{
+				sb.append(this.getString(R.string.txt_about_dialog_author_guide));
+				sb.append(this.getString(R.string.txt_about_dialog_author));
+				sb.append("\n");
+				sb.append(this.getString(R.string.txt_about_dialog_email_guide));
+				sb.append(this.getString(R.string.txt_about_dialog_email));
+			}
 			new AlertDialog.Builder(this)
 			.setTitle(this.getString(R.string.txt_about_dialog_title))
 			.setMessage(sb.toString())
