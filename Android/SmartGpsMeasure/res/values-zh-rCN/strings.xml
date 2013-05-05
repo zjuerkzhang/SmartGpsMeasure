@@ -57,6 +57,8 @@
     <string name="txt_about_dialog_author">Kevin Zhang</string>
     <string name="txt_about_dialog_email_guide">Email: </string>
     <string name="txt_about_dialog_email">2350909598@qq.com</string>   
+    <string name="txt_about_dialog_version_res_guide">版权所有: </string>
+    <string name="txt_about_dialog_version_res">MYSTORY</string>
     <string name="txt_about_dialog_ok">确定</string>
     
     <string name="txt_valid_dialog_title">便捷GPS测量仪</string>
